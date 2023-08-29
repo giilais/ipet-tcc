@@ -3,30 +3,14 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-const FormAddress = () => {
-  const { register, handleSubmit, setValue, setFocus } = useForm();
-
-  const navigate = useNavigate();
+const FormInformationStore = () => {
+  const { register, handleSubmit } = useForm();
 
   const onSubmit = (e) => {
     console.log(e);
   };
 
-  const checkCEP = (e) => {
-    const cep = e.target.value.replace(/\D/g, "");
-    console.log(cep);
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        // register({ name: 'address', value: data.logradouro });
-        setValue("address", data.logradouro);
-        setValue("neighborhood", data.bairro);
-        setValue("city", data.localidade);
-        setValue("uf", data.uf);
-        setFocus("addressNumber");
-      });
-  };
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -56,9 +40,10 @@ const FormAddress = () => {
                 fontWeight: 400,
                 fontSize: "45px",
                 color: "#000000",
+                mb: 2,
               }}
             >
-              Endereço da loja
+              Informações da loja
             </Typography>
           </Grid>
 
@@ -72,7 +57,7 @@ const FormAddress = () => {
                 color: "#000000",
               }}
             >
-              Preencha as informações de endereço da sua loja
+              Preencha com os dados do seu negócio
             </Typography>
           </Grid>
         </Grid>
@@ -82,47 +67,7 @@ const FormAddress = () => {
         <Box>
           <Grid container>
             <Grid item xs={12} sx={{ mb: 4 }}>
-              <Typography variant="p">CEP</Typography>
-              <br></br>
-              <TextField
-                id="cep"
-                variant="outlined"
-                type="text"
-                {...register("cep")}
-                onBlur={checkCEP}
-                sx={{ width: "750px" }}
-              />
-              <br></br>
-              <a href="https://buscacepinter.correios.com.br/app/endereco/index.php">
-                Descubra seu CEP
-              </a>
-            </Grid>
-
-            <Grid item xs={6} sx={{ mb: 4 }}>
-              <Typography variant="p">Estado</Typography>
-              <br></br>
-              <TextField
-                id="uf"
-                variant="outlined"
-                type="text"
-                {...register("uf")}
-                sx={{ width: "350px" }}
-              />
-            </Grid>
-            <Grid item xs={6} sx={{ mb: 4 }}>
-              <Typography variant="p">Cidade</Typography>
-              <br></br>
-              <TextField
-                id="city"
-                variant="outlined"
-                type="text"
-                {...register("city")}
-                sx={{ width: "350px" }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sx={{ mb: 4 }}>
-              <Typography variant="p">Bairro</Typography>
+              <Typography variant="p">CNPJ</Typography>
               <br></br>
               <TextField
                 id="neighborhood"
@@ -134,7 +79,7 @@ const FormAddress = () => {
             </Grid>
 
             <Grid item xs={12} sx={{ mb: 4 }}>
-              <Typography variant="p">Rua</Typography>
+              <Typography variant="p">Razão Social</Typography>
               <br></br>
               <TextField
                 id="address"
@@ -145,25 +90,43 @@ const FormAddress = () => {
               />
             </Grid>
 
-            <Grid item xs={6} sx={{ mb: 4 }}>
-              <Typography variant="p">Nº</Typography>
+            <Grid item xs={12} sx={{ mb: 4 }}>
+              <Typography variant="p">
+                Nome da loja (como aparecerá no app)
+              </Typography>
               <br></br>
               <TextField
-                id="addressNumber"
+                id="address"
                 variant="outlined"
                 type="text"
-                {...register("addressNumber")}
-                sx={{ width: "350px" }}
+                {...register("address")}
+                sx={{ width: "750px" }}
               />
             </Grid>
-            <Grid item xs={6} sx={{ mb: 4 }}>
-              <Typography variant="p">Complemento (opcional)</Typography>
+
+            <Grid item xs={12} sx={{ mb: 4 }}>
+              <Typography variant="p">
+                Telefone ou celular da loja (como aparecerá no app)
+              </Typography>
               <br></br>
               <TextField
-                id="complement"
+                id="address"
                 variant="outlined"
                 type="text"
-                sx={{ width: "350px" }}
+                {...register("address")}
+                sx={{ width: "750px" }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sx={{ mb: 4 }}>
+              <Typography variant="p">Especialidade</Typography>
+              <br></br>
+              <TextField
+                id="address"
+                variant="outlined"
+                type="text"
+                {...register("address")}
+                sx={{ width: "750px" }}
               />
             </Grid>
           </Grid>
@@ -181,9 +144,9 @@ const FormAddress = () => {
                 color: "#FFF",
                 mt: 1,
               }}
-              onClick={() => navigate("/registerStoreManager")}
+              onClick={() => navigate("/registerPlans")}
             >
-              Enviar
+              Continuar
             </Button>
           </Box>
         </Box>
@@ -192,4 +155,4 @@ const FormAddress = () => {
   );
 };
 
-export default FormAddress;
+export default FormInformationStore;
