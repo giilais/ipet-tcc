@@ -26,7 +26,7 @@ const Map = () => {
     setSearchBox(ref);
   };
 
-  console.log('teste da Gi:', searchBox);
+  console.log("teste da Gi:", searchBox);
 
   const onPlacesChanged = () => {
     const places = searchBox.getPlaces();
@@ -40,12 +40,9 @@ const Map = () => {
   };
 
   return (
-    <Container sx={{ mt: "20px", justifyContent: "center" }}>
+    <Container sx={{ mt: "20px", justifyContent: "center", ml: 40 }}>
       <Card sx={{ width: "1000px", height: "200px", borderRadius: "10px" }}>
-        <LoadScript
-          googleMapsApiKey="AIzaSyDHQcxTp0o_kPARz3TSS2W8ufxQ-UuytrU"
-          libraries={["places"]}
-        >
+        <LoadScript googleMapsApiKey="" libraries={["places"]}>
           <GoogleMap
             onLoad={onMapLoad}
             mapContainerStyle={{ width: "100%", height: "100%" }}
