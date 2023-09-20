@@ -6,34 +6,46 @@ import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Button, Grid, Tooltip } from "@mui/material";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  getFirestore,
-} from "firebase/firestore";
+import { getDatabase, onValue, ref, remove } from "firebase/database";
 import { firebaseApp } from "../../services/firebaseConfig";
 
 const CardService = () => {
+  const db = getDatabase(firebaseApp);
+  const servicesRef = ref(db, "servicos");
+
   const [services, setServices] = useState([]);
 
-  const db = getFirestore(firebaseApp);
-  const servicesCollectionRef = collection(db, "IpetServices");
-
   useEffect(() => {
-    const getServices = async () => {
-      const data = await getDocs(servicesCollectionRef);
-      setServices(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    let unsubscribe;
+    if (servicesRef) {
+      unsubscribe = onValue(servicesRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const servicesList = Object.keys(data).map((key) => ({
+            id: key,
+            ...data[key],
+          }));
+          setServices(servicesList);
+        } else {
+          setServices([]);
+        }
+      });
+    }
+
+    return () => {
+      // Limpar a subscrição quando o componente é desmontado
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
-    getServices();
-  }, []);
+  }, [servicesRef]);
 
   async function deleteService(id) {
     try {
-      const serviceDoc = doc(db, "IpetServices", id);
-      await deleteDoc(serviceDoc);
-      setServices(services.filter((service) => service.id !== id));
+      await remove(ref(servicesRef, id));
+      setServices((prevServices) =>
+        prevServices.filter((service) => service.id !== id)
+      );
     } catch (error) {
       alert("Erro ao excluir o serviço:", error);
     }
@@ -67,7 +79,7 @@ const CardService = () => {
                   fontWeight: 600,
                 }}
               >
-                Serviço: {service.selectService}
+                Serviço: {service.servicos}
               </Typography>
             </Grid>
 
@@ -92,7 +104,7 @@ const CardService = () => {
                         paddingBottom: "5px",
                       }}
                     >
-                      Preço: {service.price}
+                      Preço: {service.preco}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
@@ -103,7 +115,7 @@ const CardService = () => {
                         paddingBottom: "5px",
                       }}
                     >
-                      Preço: {service.selectTimeDuraction}
+                      Tempo: {service.tempo}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -115,7 +127,7 @@ const CardService = () => {
                       paddingBottom: "5px",
                     }}
                   >
-                    Descrição: {service.description}
+                    Descrição: {service.descricao}
                   </Typography>
                 </Grid>
 
@@ -139,13 +151,13 @@ const CardService = () => {
                         paddingBottom: "5px",
                       }}
                     >
-                      Porte: {service.animalsSizeSelect}
+                      Porte: {service.porte}
                     </Typography>
                   </Grid>
                 </Grid>
               </Grid>
 
-              <Grid item xs={2}>
+              {/* <Grid item xs={2}>
                 <Button
                   sx={{
                     fontFamily: "Montserrat",
@@ -160,7 +172,7 @@ const CardService = () => {
                 >
                   Editar
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
           </AccordionDetails>
         </Accordion>

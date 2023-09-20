@@ -2,6 +2,7 @@ import React from "react";
 import ResponsiveAppBar from "../../components/AppBar/AppBar";
 import { Grid, Typography } from "@mui/material";
 import ModalNewService from "../../components/ModalNewService/ModalNewService";
+import CardService from "../../components/CardService/CardService";
 
 const RegisterService = () => {
   return (
@@ -27,7 +28,9 @@ const RegisterService = () => {
         </Grid>
       </Grid>
 
-      <Grid container justifyContent={"center"}></Grid>
+      <Grid container justifyContent={"center"}>
+        <CardService/>
+      </Grid>
     </>
   );
 };
