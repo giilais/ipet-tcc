@@ -176,14 +176,14 @@ const FormAddress = () => {
                 width: "200px",
                 height: "45px",
                 fontFamily: "Montserrat",
-                fontWeight: 300,
+                fontWeight: 500,
                 fontSize: "15px",
                 color: "#FFF",
                 mt: 1,
               }}
               onClick={() => navigate("/registerStoreManager")}
             >
-              Enviar
+              Continuar
             </Button>
           </Box>
         </Box>

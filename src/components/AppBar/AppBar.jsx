@@ -10,24 +10,23 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import PetsIcon from "@mui/icons-material/Pets";
 import PersonIcon from "@mui/icons-material/Person";
-//import { useNavigate } from "react-router-dom";
-//import { useSignOut } from "react-firebase-hooks/auth";
-//import { auth } from "../../services/firebaseConfig";
+import { useNavigate } from "react-router-dom";
+import { useSignOut } from "react-firebase-hooks/auth";
+import { auth } from "../../services/firebaseConfig";
 
 function ResponsiveAppBar() {
-
   const [anchorElUser, setAnchorElUser] = useState(null);
-  //const [signOut, loading, error] = useSignOut(auth);
+  const [signOut, loading, error] = useSignOut(auth);
 
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-//   function goTo() {
-//     navigate("/service-registration");
-//   }
+  function goTo() {
+    navigate("/registerServices");
+  }
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
@@ -53,7 +52,7 @@ function ResponsiveAppBar() {
 
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Button
-              //onClick={goTo}
+              onClick={goTo}
               sx={{
                 my: 2,
                 color: "white",
@@ -117,13 +116,13 @@ function ResponsiveAppBar() {
               <MenuItem>
                 <Button
                   type="text"
-                //   onClick={async () => {
-                //     const success = await signOut();
-                //     if (success) {
-                //       alert("Saindo...");
-                //       navigate("/login");
-                //     }
-                //   }}
+                  onClick={async () => {
+                    const success = await signOut();
+                    if (success) {
+                      alert("Saindo...");
+                      navigate("/login");
+                    }
+                  }}
                   sx={{
                     fontFamily: "Montserrat",
                     fontSize: "15px",

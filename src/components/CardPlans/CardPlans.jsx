@@ -10,8 +10,11 @@ import dogplans from "../../../src/assests/images/patinha3.jpg";
 import dogplans2 from "../../../src/assests/images/patinha1.jpg";
 import dogplans3 from "../../../src/assests/images/patinha2.jpg";
 import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const CardsPlans = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Box
@@ -93,6 +96,7 @@ const CardsPlans = () => {
                 color: "#FFF",
                 fontFamily: "Montserrat",
               }}
+              onClick={() => navigate("/home")}
             >
               Quero esse plano
             </Button>
@@ -163,6 +167,7 @@ const CardsPlans = () => {
                 color: "#FFF",
                 fontFamily: "Montserrat",
               }}
+              onClick={() => navigate("/home")}
             >
               Quero esse plano
             </Button>
@@ -233,6 +238,7 @@ const CardsPlans = () => {
                 color: "#FFF",
                 fontFamily: "Montserrat",
               }}
+              onClick={() => navigate("/home")}
             >
               Quero esse plano
             </Button>

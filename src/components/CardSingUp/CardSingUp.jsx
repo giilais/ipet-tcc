@@ -95,22 +95,22 @@ const CardSingUp = () => {
     //   console.log(cnpj);
     //   console.log(isValidCNPJ(cnpj));
     // } else {
-      try {
-        await set(ref(db, "IpetClientsWeb/" + name), {
-          cnpj: cnpj,
-          email: email,
-          name: name,
-        });
+    try {
+      await set(ref(db, "IpetClientsWeb/" + name), {
+        cnpj: cnpj,
+        email: email,
+        name: name,
+      });
 
-        await createUserWithEmailAndPassword(email, password);
+      await createUserWithEmailAndPassword(email, password);
 
-        alert("Usuário criado com sucesso!");
+      alert("Usuário criado com sucesso!");
 
-        navigate("/home");
-      } catch (e) {
-        alert("Erro", e);
-        console.log("erro:", e);
-      }
+      navigate("/registerAddress");
+    } catch (e) {
+      alert("Erro", e);
+      console.log("erro:", e);
+    }
   };
 
   return (

@@ -12,6 +12,16 @@ const FormInformationStore = () => {
 
   const navigate = useNavigate();
 
+  const checkCNPJ = (e) => {
+    if(!e.target.value){
+      return;
+    }
+    const cnpj = e.target.value.replace(/[^\d]+/g, "");
+    fetch(`https://www.receitaws.com.br/v1/cnpj/${cnpj}`).then(res => {
+      console.log(res);
+    })
+  }
+  
   return (
     <Box
       sx={{

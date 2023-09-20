@@ -26,8 +26,6 @@ const Map = () => {
     setSearchBox(ref);
   };
 
-  console.log("teste da Gi:", searchBox);
-
   const onPlacesChanged = () => {
     const places = searchBox.getPlaces();
     const place = places[0];
