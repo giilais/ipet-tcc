@@ -22,6 +22,7 @@ import { getDatabase, ref, set } from "firebase/database";
 import { firebaseApp } from "../../services/firebaseConfig";
 
 const CardSingUp = () => {
+  
   const db = getDatabase(firebaseApp);
 
   const [name, setName] = useState("");
@@ -49,52 +50,10 @@ const CardSingUp = () => {
   if (user) {
     navigate("/login");
   }
-
-  // const isValidCNPJ = (cnpj) => {
-  //   // Remove characters that are not digits
-  //   cnpj = cnpj.replace(/\D/g, "");
-
-  //   // CNPJ must have exactly 14 digits
-  //   if (cnpj.length !== 14) {
-  //     return false;
-  //   }
-
-  //   // Validate CNPJ using a checksum algorithm
-  //   const weights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  //   const sum1 = cnpj
-  //     .slice(0, 12)
-  //     .split("")
-  //     .map(Number)
-  //     .reduce((acc, digit, index) => acc + digit * weights[index], 0);
-
-  //   const remainder1 = sum1 % 11 < 2 ? 0 : 11 - (sum1 % 11);
-
-  //   if (remainder1 !== Number(cnpj.charAt(12))) {
-  //     return false;
-  //   }
-
-  //   const sum2 = cnpj
-  //     .slice(0, 13)
-  //     .split("")
-  //     .map(Number)
-  //     .reduce((acc, digit, index) => acc + digit * weights[index], 0);
-
-  //   const remainder2 = sum2 % 11 < 2 ? 0 : 11 - (sum2 % 11);
-
-  //   if (remainder2 !== Number(cnpj.charAt(13))) {
-  //     return false;
-  //   }
-
-  //   return true;
-  // };
-
+  
   const handleRegisterUser = async (e) => {
     e.preventDefault();
-    // if (isValidCNPJ(cnpj)) {
-    //   alert("CNPJ invalido!");
-    //   console.log(cnpj);
-    //   console.log(isValidCNPJ(cnpj));
-    // } else {
+
     try {
       await set(ref(db, "IpetClientsWeb/" + name), {
         cnpj: cnpj,
@@ -105,6 +64,8 @@ const CardSingUp = () => {
       await createUserWithEmailAndPassword(email, password);
 
       alert("Usuário criado com sucesso!");
+
+      localStorage.setItem('nameUsuario',JSON.stringify(name)); //Salvando nome do usuario logado
 
       navigate("/registerAddress");
     } catch (e) {

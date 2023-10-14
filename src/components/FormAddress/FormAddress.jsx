@@ -1,10 +1,14 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { get, push, ref, set } from "firebase/database";
+import db from "../../services/firebaseConfig";
 
-const FormAddress = () => {
+const FormAddress = (props) => {
   const { register, handleSubmit, setValue, setFocus } = useForm();
+
+  const [rua, setRua] = useState("rua teste");
 
   const navigate = useNavigate();
 
@@ -26,6 +30,41 @@ const FormAddress = () => {
         setValue("uf", data.uf);
         setFocus("addressNumber");
       });
+  };
+
+  const cadastrarEndereco = async () => {
+    try {
+      let usuario = localStorage.getItem("nameUsuario");
+
+      // Verificar se a variável usuario não é nula e não está vazia 
+      if (
+        usuario &&
+        usuario.length > 2 &&
+        usuario.charAt(0) === '"' &&
+        usuario.charAt(usuario.length - 1) === '"'
+      ) {
+        usuario = usuario.slice(1, -1); //retirando as aspas
+      }
+
+      if (usuario) {
+        const clienteRef = push(
+          ref(db, "IpetClientsWeb/" + usuario + "/endereco")
+        );
+
+        set(clienteRef, {
+          rua,
+        }).then(() => {
+          alert("Endereço cadastrado com sucesso! ");
+          navigate("/registerStoreManager");
+        });
+      } else {
+        alert(
+          "Usuário não encontrado. Por favor, cadastre o usuário primeiro."
+        );
+      }
+    } catch (error) {
+      alert(`Erro ao cadastrar endereço: ${error.message}`);
+    }
   };
 
   return (
@@ -181,7 +220,7 @@ const FormAddress = () => {
                 color: "#FFF",
                 mt: 1,
               }}
-              onClick={() => navigate("/registerStoreManager")}
+              onClick={cadastrarEndereco}
             >
               Continuar
             </Button>
