@@ -38,7 +38,7 @@ const FormAddress = (props) => {
 
   const convertCEP = (e) => {
     fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${cep}&key=AIzaSyBgWwQPYmX4-v8gOWxuVisP5A00Yj0YpOs`
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${cep}&key=`
     )
       .then((response) => response.json())
       .then((data) => {
