@@ -9,6 +9,7 @@ import StoreManager from "../pages/Register/StoreManager/StoreManager";
 import StoreInformation from "../pages/Register/StoreInformation/StoreInformation";
 import Plans from "../pages/Register/Plans/Plans";
 import RegisterService from "../pages/RegisterService/RegisterService";
+import MinhaAgenda from "../pages/MinhaAgenda/MinhaAgenda";
 
 const Roots = () => {
   return (
@@ -22,6 +23,7 @@ const Roots = () => {
       <Route element={<StoreInformation />} path="/registerInformationStore" />
       <Route element={<Plans />} path="/registerPlans" />
       <Route element={<RegisterService />} path="/registerServices" />
+      <Route element={<MinhaAgenda/>} path="/minhaAgenda"/>
     </Routes>
   );
 };
