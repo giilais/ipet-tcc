@@ -8,7 +8,9 @@ import db from "../../services/firebaseConfig";
 const FormAddress = (props) => {
   const { register, handleSubmit, setValue, setFocus } = useForm();
 
-  const [rua, setRua] = useState("rua teste");
+  const [cep, setCep] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   const navigate = useNavigate();
 
@@ -29,14 +31,35 @@ const FormAddress = (props) => {
         setValue("city", data.localidade);
         setValue("uf", data.uf);
         setFocus("addressNumber");
+
+        cadastrarEndereco(data); // Passando os dados do CEP para cadastrarEndereco
       });
   };
 
-  const cadastrarEndereco = async () => {
+  const convertCEP = (e) => {
+    fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${cep}&key=AIzaSyBgWwQPYmX4-v8gOWxuVisP5A00Yj0YpOs`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.results.length > 0) {
+          const location = data.results[0].geometry.location;
+          setLatitude(location.lat);
+          setLongitude(location.lng);
+        } else {
+          alert("Endereço não encontrado.");
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao converter CEP:", error);
+      });
+  };
+
+  const cadastrarEndereco = async (dataCEP) => {
     try {
       let usuario = localStorage.getItem("nameUsuario");
 
-      // Verificar se a variável usuario não é nula e não está vazia 
+      // Verificar se a variável usuario não é nula e não está vazia
       if (
         usuario &&
         usuario.length > 2 &&
@@ -47,12 +70,15 @@ const FormAddress = (props) => {
       }
 
       if (usuario) {
+        convertCEP();
         const clienteRef = push(
           ref(db, "IpetClientsWeb/" + usuario + "/endereco")
         );
 
         set(clienteRef, {
-          rua,
+          longitude,
+          latitude,
+          ...dataCEP,
         }).then(() => {
           alert("Endereço cadastrado com sucesso! ");
           navigate("/registerStoreManager");
