@@ -16,7 +16,7 @@ import { auth } from "../../services/firebaseConfig";
 
 function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [signOut, loading, error] = useSignOut(auth);
+  const [signOut] = useSignOut(auth);
 
   const navigate = useNavigate();
 
@@ -26,6 +26,10 @@ function ResponsiveAppBar() {
 
   function goTo() {
     navigate("/registerServices");
+  }
+
+  function goToAgenda() {
+    navigate("/minhaAgenda");
   }
 
   const handleCloseUserMenu = () => {
@@ -67,6 +71,42 @@ function ResponsiveAppBar() {
               }}
             >
               Cadastro de Serviço
+            </Button>
+
+            <Button
+              onClick={goToAgenda}
+              sx={{
+                my: 2,
+                color: "white",
+                display: "block",
+                textTransform: "none",
+                fontFamily: "Montserrat",
+                fontSize: "15px",
+                "&:hover": {
+                  color: "#FE8D8D",
+                  transition: "400ms",
+                },
+              }}
+            >
+              Minha Agenda
+            </Button>
+
+            <Button
+              onClick={goToAgenda}
+              sx={{
+                my: 2,
+                color: "white",
+                display: "block",
+                textTransform: "none",
+                fontFamily: "Montserrat",
+                fontSize: "15px",
+                "&:hover": {
+                  color: "#FE8D8D",
+                  transition: "400ms",
+                },
+              }}
+            >
+              Meus Agendamentos
             </Button>
           </Box>
 
