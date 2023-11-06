@@ -22,7 +22,6 @@ import { getDatabase, ref, set } from "firebase/database";
 import { firebaseApp } from "../../services/firebaseConfig";
 
 const CardSingUp = () => {
-  
   const db = getDatabase(firebaseApp);
 
   const [name, setName] = useState("");
@@ -50,7 +49,7 @@ const CardSingUp = () => {
   if (user) {
     navigate("/login");
   }
-  
+
   const handleRegisterUser = async (e) => {
     e.preventDefault();
 
@@ -65,7 +64,7 @@ const CardSingUp = () => {
 
       alert("Usuário criado com sucesso!");
 
-      localStorage.setItem('nameUsuario',JSON.stringify(name)); //Salvando nome do usuario logado
+      localStorage.setItem("nameUsuario", JSON.stringify(name)); //Salvando nome do usuario logado
 
       navigate("/registerAddress");
     } catch (e) {
@@ -78,11 +77,12 @@ const CardSingUp = () => {
     <>
       <Card
         sx={{
-          backgroundColor: " #ffdfde",
+          backgroundColor: "white",
           borderRadius: "20px",
           height: "550px",
           width: "550px",
-          paddingLeft: "30px",
+          boxShadow: "10px 10px 25px 10px #FABF7C",
+          paddingLeft: "50px",
         }}
       >
         <form>
@@ -229,10 +229,17 @@ const CardSingUp = () => {
               fontWeight: 400,
               fontSize: "15px",
               color: "#3f3f3f",
-              marginTop: "20px",
+              marginTop: "40px",
+              paddingLeft: "30px",
             }}
           >
-            Já é cadastrado? <Link to="/login">Login</Link>
+            Já é cadastrado?{" "}
+            <Link
+              to="/login"
+              style={{ color: "#2a2a2a", textDecoration: "none" }}
+            >
+              Login
+            </Link>
           </Typography>
         </form>
       </Card>

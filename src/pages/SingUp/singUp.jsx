@@ -2,7 +2,8 @@ import React from "react";
 
 import { Grid, Box } from "@mui/material";
 
-import logo from "../../assests/images/logo.png";
+import logo from "../../assests/images/login.jpg";
+
 import "./singUp.css";
 import CardSingUp from "../../components/CardSingUp/CardSingUp";
 

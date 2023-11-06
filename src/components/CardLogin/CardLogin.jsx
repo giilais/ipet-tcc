@@ -18,7 +18,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../services/firebaseConfig";
-//import errors from "../../utils/firebase-message";
 
 const CardLogin = () => {
   const [email, setEmail] = useState("");
@@ -30,12 +29,8 @@ const CardLogin = () => {
     setEye(!eye);
   };
 
-  const [
-    signInWithEmailAndPassword,
-    user,
-    loading,
-    error,
-  ] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
 
   const navigate = useNavigate();
 
@@ -78,10 +73,11 @@ const CardLogin = () => {
 
       <Card
         sx={{
-          backgroundColor: " #ffdfde",
+          backgroundColor: "white",
           borderRadius: "20px",
           height: "550px",
           width: "550px",
+          boxShadow: '10px 10px 25px 10px #FABF7C'
         }}
       >
         <form>
@@ -130,7 +126,6 @@ const CardLogin = () => {
                 marginTop: "50px",
                 borderColor: "#000000",
               }}
-              helperText={!email ? "empreencha seu email!" : ""}
               error={!email}
             />
             <TextField
@@ -160,7 +155,6 @@ const CardLogin = () => {
                 width: "500px",
                 marginTop: "20px",
               }}
-              helperText={!password ? "empreencha sua senha!" : ""}
               error={!password}
             />
           </Grid>
@@ -201,7 +195,13 @@ const CardLogin = () => {
               textAlign: "center",
             }}
           >
-            Esqueceu a senha? <Link to="/resetPassword">Redefinir</Link>
+            Esqueceu a senha?{" "}
+            <Link
+              style={{ color: "#2a2a2a", textDecoration: "none" }}
+              to="/resetPassword"
+            >
+              Redefinir
+            </Link>
           </Typography>
           <Typography
             sx={{
@@ -213,7 +213,13 @@ const CardLogin = () => {
               paddingLeft: "30px",
             }}
           >
-            Não é cadastrado? <Link to="/singUp">Cadastre-se</Link>
+            Não é cadastrado?{" "}
+            <Link
+              to="/singUp"
+              style={{ color: "#2a2a2a", textDecoration: "none" }}
+            >
+              Cadastre-se
+            </Link>
           </Typography>
         </form>
       </Card>

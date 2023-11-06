@@ -1,39 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ResponsiveAppBar from "../../components/AppBar/AppBar";
-import { Button, Card, CardContent, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import ModalAgenda from "../../components/ModalAgenda/ModalAgenda";
-import { child, get, ref } from "firebase/database";
-import db from "../../services/firebaseConfig";
+import AgendaCard from "../../components/AgendaCard/AgendaCard";
+
 
 const MinhaAgenda = () => {
-  const [agendaDetails, setAgendaDetails] = useState(null);
+  // const [agendaDetails, setAgendaDetails] = useState(null);
 
-  let usuario = localStorage.getItem("nameUsuario");
+  // let usuario = localStorage.getItem("nameUsuario");
 
-  const checkAgenda = async () => {
-    // Verificar se a variável usuario não é nula e não está vazia
-    if (
-      usuario &&
-      usuario.length > 2 &&
-      usuario.charAt(0) === '"' &&
-      usuario.charAt(usuario.length - 1) === '"'
-    ) {
-      usuario = usuario.slice(1, -1); //retirando as aspas
-    }
+  // const checkAgenda = async () => {
+  //   // Verificar se a variável usuario não é nula e não está vazia
+  //   if (
+  //     usuario &&
+  //     usuario.length > 2 &&
+  //     usuario.charAt(0) === '"' &&
+  //     usuario.charAt(usuario.length - 1) === '"'
+  //   ) {
+  //     usuario = usuario.slice(1, -1); //retirando as aspas
+  //   }
 
-    const agendaRef = ref(db, "IpetClientsWeb/" + usuario + "/agenda");
-    const snapshot = await get(child(agendaRef));
+  //   const agendaRef = ref(db, "IpetClientsWeb/" + usuario + "/agenda");
+  //   const snapshot = await get(child(agendaRef));
 
-    if (snapshot.exists()) {
-      setAgendaDetails(snapshot.val());
-    }
-  };
+  //   if (snapshot.exists()) {
+  //     setAgendaDetails(snapshot.val());
+  //   }
+  // };
 
-  console.log("testeeeeeeeeeeeeeeeeeeeeee", usuario);
-
-  useEffect(() => {
-    checkAgenda();
-  }, []);
+  // useEffect(() => {
+  //   checkAgenda();
+  // }, []);
 
   return (
     <>
@@ -58,7 +56,11 @@ const MinhaAgenda = () => {
         </Grid>
       </Grid>
 
-      {agendaDetails && (
+      <Box>
+        <AgendaCard/>
+      </Box>
+
+      {/* {agendaDetails && (
         <Card sx={{ maxWidth: 300 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -81,7 +83,7 @@ const MinhaAgenda = () => {
             </Button>
           </CardContent>
         </Card>
-      )}
+      )} */}
     </>
   );
 };

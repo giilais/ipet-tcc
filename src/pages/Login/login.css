@@ -1,8 +1,12 @@
 .logo-login {
   height: 400px;
-  width: 400px;
+  width: 500px;
 }
 
 .css-2s90m6-MuiAvatar-root {
   background-color: #ffffff00 !important;
+}
+
+a {
+  color: "#000000";
 }
