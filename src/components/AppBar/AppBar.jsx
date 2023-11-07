@@ -46,7 +46,7 @@ function ResponsiveAppBar() {
                 sx={{
                   color: "#ffffff",
                   "&:hover": {
-                    color: "#FE8D8D",
+                    color: "#ffa726",
                     transition: "400ms",
                   },
                 }}
@@ -65,7 +65,7 @@ function ResponsiveAppBar() {
                 fontFamily: "Montserrat",
                 fontSize: "15px",
                 "&:hover": {
-                  color: "#FE8D8D",
+                  color: "#ffa726",
                   transition: "400ms",
                 },
               }}
@@ -83,7 +83,7 @@ function ResponsiveAppBar() {
                 fontFamily: "Montserrat",
                 fontSize: "15px",
                 "&:hover": {
-                  color: "#FE8D8D",
+                  color: "#ffa726",
                   transition: "400ms",
                 },
               }}
@@ -101,7 +101,7 @@ function ResponsiveAppBar() {
                 fontFamily: "Montserrat",
                 fontSize: "15px",
                 "&:hover": {
-                  color: "#FE8D8D",
+                  color: "#ffa726",
                   transition: "400ms",
                 },
               }}
@@ -117,7 +117,7 @@ function ResponsiveAppBar() {
                   sx={{
                     color: "#ffffff",
                     "&:hover": {
-                      color: "#FE8D8D",
+                      color: "#ffa726",
                       transition: "400ms",
                     },
                   }}
