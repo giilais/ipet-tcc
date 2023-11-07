@@ -89,9 +89,13 @@ const ModalAgenda = () => {
     }
 
     const agendaRef = push(ref(db, "IpetClientsWeb/" + usuario + "/agenda"));
-    set(agendaRef, {horarioInicio, horarioFim, dias })
-      .then(() => {      
+    set(agendaRef, { horarioInicio, horarioFim, dias })
+      .then(() => {
         showSnackbar("Agenda cadastrado com sucesso!");
+        setOpen(false);
+        setHorarioFim("");
+        setHorarioInicio("");
+        dias([]);
       })
       .catch((error) => {
         showSnackbar(`Erro ao criar agenda: ${error.message}`);
@@ -114,7 +118,7 @@ const ModalAgenda = () => {
               color: "#ffffff",
               backgroundColor: "#000000",
               "&:hover": {
-                backgroundColor: " #ffdfde",
+                backgroundColor: " #ffa726",
                 color: "#000000",
                 transition: "400ms",
               },
@@ -184,7 +188,6 @@ const ModalAgenda = () => {
                     <TextField
                       id="time-initial"
                       type="time"
-                      defaultValue="08:00"
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -204,7 +207,6 @@ const ModalAgenda = () => {
                     <TextField
                       id="time-f"
                       type="time"
-                      defaultValue="17:00"
                       InputLabelProps={{
                         shrink: true,
                       }}

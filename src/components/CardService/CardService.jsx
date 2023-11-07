@@ -11,7 +11,19 @@ import { firebaseApp } from "../../services/firebaseConfig";
 
 const CardService = () => {
   const db = getDatabase(firebaseApp);
-  const servicesRef = ref(db, "servicos");
+
+  let usuario = localStorage.getItem("nameUsuario");
+
+  if (
+    usuario &&
+    usuario.length > 2 &&
+    usuario.charAt(0) === '"' &&
+    usuario.charAt(usuario.length - 1) === '"'
+  ) {
+    usuario = usuario.slice(1, -1);
+  }
+
+  const servicesRef = ref(db, "IpetClientsWeb/" + usuario + "/servicos");
 
   const [services, setServices] = useState([]);
 
@@ -42,16 +54,15 @@ const CardService = () => {
 
   async function deleteService(id) {
     try {
-      await remove(ref(servicesRef, id));
+      await remove(ref(db, "IpetClientsWeb/" + usuario + "/servicos/" + id));
       setServices((prevServices) =>
         prevServices.filter((service) => service.id !== id)
       );
+      alert("Excluido com sucesso!");
     } catch (error) {
       alert("Erro ao excluir o serviço:", error);
     }
   }
-
-  console.log("SERVIÇOS:", services);
 
   return (
     <>
@@ -62,7 +73,7 @@ const CardService = () => {
             ml: 3,
             mr: 3,
             width: "800px",
-            backgroundColor: "#fff2f2",
+            backgroundColor: "#ffcc80",
           }}
           key={service.id}
         >
@@ -92,7 +103,7 @@ const CardService = () => {
               </Tooltip>
             </Grid>
           </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: "#fff2f2" }}>
+          <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
             <Grid container>
               <Grid item xs={10}>
                 <Grid container>
@@ -140,7 +151,7 @@ const CardService = () => {
                         paddingBottom: "5px",
                       }}
                     >
-                      Animais: {service.animal}
+                      Animais: {service.animais}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>

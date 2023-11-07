@@ -5,12 +5,22 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Grid, InputAdornment, Snackbar, TextField } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  InputAdornment,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+} from "@mui/material";
 
 import { useState } from "react";
 
-import { ref, push, set } from "firebase/database";
+import { ref, push, set, get } from "firebase/database";
 import db from "../../services/firebaseConfig";
+import { useEffect } from "react";
 
 const style = {
   position: "absolute",
@@ -18,7 +28,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 700,
-  height: 500,
+  height: 630,
   bgcolor: "background.paper",
   borderRadius: 3,
   boxShadow: 24,
@@ -39,22 +49,111 @@ const ModalNewService = () => {
   const [tempo, setTempo] = useState("");
   const [preco, setPreco] = useState("");
 
-  const cadastrarServico = () => {
-    const novoServicoRef = push(ref(db, "servicos"));
-    set(novoServicoRef, {
-      servicos,
-      descricao,
-      animais,
-      porte,
-      tempo,
-      preco,
-    })
-      .then(() => {
-        showSnackbar("Serviço cadastrado com sucesso!");
-      })
-      .catch((error) => {
-        showSnackbar(`Erro ao cadastrar serviço: ${error.message}`);
-      });
+  const [servicosOptions, setServicosOptions] = useState([]);
+  const [animaisOptions, setAnimaisOptions] = useState([]);
+  const [porteOptions, setPorteOptions] = useState([]);
+
+  const [marcarMaisDeUm, setMarcarMaisDeUm] = useState(false);
+  const [numeroDeServicos, setNumeroDeServicos] = useState(0);
+
+  // Função para carregar as opções de serviços do Firebase
+  const carregarOpcoesServicos = async () => {
+    const servicosRef = ref(db, "servicos");
+
+    try {
+      const snapshot = await get(servicosRef);
+      if (snapshot.exists()) {
+        setServicosOptions(Object.values(snapshot.val()));
+      }
+    } catch (error) {
+      console.error("Erro ao carregar opções de serviços:", error);
+    }
+  };
+
+  // Função para carregar as opções de animais do Firebase
+  const carregarOpcoesAnimais = async () => {
+    const animaisRef = ref(db, "animais");
+
+    try {
+      const snapshot = await get(animaisRef);
+      if (snapshot.exists()) {
+        setAnimaisOptions(Object.values(snapshot.val()));
+      }
+    } catch (error) {
+      console.error("Erro ao carregar opções de animais:", error);
+    }
+  };
+
+  // Função para carregar as opções de porte do Firebase
+  const carregarOpcoesPorte = async () => {
+    const porteRef = ref(db, "porte");
+
+    try {
+      const snapshot = await get(porteRef);
+      if (snapshot.exists()) {
+        setPorteOptions(Object.values(snapshot.val()));
+      }
+    } catch (error) {
+      console.error("Erro ao carregar opções de porte:", error);
+    }
+  };
+
+  useEffect(() => {
+    carregarOpcoesServicos();
+    carregarOpcoesPorte();
+    carregarOpcoesAnimais();
+  }, []);
+
+  const cadastrarServico = async () => {
+    try {
+      let usuario = localStorage.getItem("nameUsuario");
+
+      if (
+        usuario &&
+        usuario.length > 2 &&
+        usuario.charAt(0) === '"' &&
+        usuario.charAt(usuario.length - 1) === '"'
+      ) {
+        usuario = usuario.slice(1, -1);
+      }
+
+      if (usuario) {
+        const servicosRef = push(
+          ref(db, "IpetClientsWeb/" + usuario + "/servicos")
+        );
+
+        const servicosData = {
+          servicos,
+          descricao,
+          animais,
+          porte,
+          tempo,
+          preco,
+        };
+
+        set(servicosRef, servicosData).then(() => {
+          showSnackbar("Serviço cadastrado com sucesso!");
+        });
+
+        setOpen(false);
+        limparDados();
+      } else {
+        alert(
+          "Usuário não encontrado. Por favor, cadastre o usuário primeiro."
+        );
+      }
+    } catch (error) {
+      showSnackbar(`Erro ao cadastrar serviço: ${error.message}`);
+    }
+  };
+
+  const limparDados = () => {
+    setServicos("");
+    setDescricao("");
+    setAnimais("");
+    setPorte("");
+    setTempo("");
+    setPreco("");
   };
 
   const showSnackbar = (message) => {
@@ -73,7 +172,7 @@ const ModalNewService = () => {
               color: "#ffffff",
               backgroundColor: "#000000",
               "&:hover": {
-                backgroundColor: " #ffdfde",
+                backgroundColor: " #ffa726",
                 color: "#000000",
                 transition: "400ms",
               },
@@ -136,13 +235,20 @@ const ModalNewService = () => {
                   <Grid item xs={12}>
                     <Typography variant="p">Serviços: </Typography>
                     <br></br>
-                    <TextField
+                    <Select
+                      label="Selecione um serviço"
                       id="servicos"
                       name="servicos"
                       sx={{ width: 650 }}
                       value={servicos}
                       onChange={(e) => setServicos(e.target.value)}
-                    />
+                    >
+                      {servicosOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Grid>
                 </Grid>
 
@@ -165,24 +271,38 @@ const ModalNewService = () => {
                     <Typography variant="p">Animais: </Typography>
                     <br></br>
 
-                    <TextField
+                    <Select
+                      label="Animais:"
                       id="animais"
                       name="animais"
                       sx={{ width: 300 }}
                       value={animais}
                       onChange={(e) => setAnimais(e.target.value)}
-                    />
+                    >
+                      {animaisOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="p">Porte: </Typography>
                     <br></br>
-                    <TextField
+                    <Select
+                      label="Porte:"
                       id="porte"
                       name="porte"
                       sx={{ width: 300 }}
                       value={porte}
                       onChange={(e) => setPorte(e.target.value)}
-                    />
+                    >
+                      {porteOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Grid>
                 </Grid>
 
@@ -214,6 +334,32 @@ const ModalNewService = () => {
                         ),
                       }}
                     ></TextField>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={marcarMaisDeUm}
+                          onChange={(e) => setMarcarMaisDeUm(e.target.checked)}
+                        />
+                      }
+                      label="Deseja marcar mais de um serviço por horário?"
+                    />
+                    {marcarMaisDeUm && (
+                      <>
+                        <br></br>
+                        <Typography variant="p">
+                          Número de serviços:{" "}
+                        </Typography>
+                        <br></br>
+                        <TextField
+                          type="number"
+                          value={numeroDeServicos}
+                          onChange={(e) => setNumeroDeServicos(e.target.value)}
+                        />
+                      </>
+                    )}
                   </Grid>
                 </Grid>
 
