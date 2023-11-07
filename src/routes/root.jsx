@@ -6,8 +6,6 @@ import SingUp from "../pages/SingUp/singUp";
 import Home from "../pages/Home/home";
 import Address from "../pages/Register/Address/Address";
 import StoreManager from "../pages/Register/StoreManager/StoreManager";
-import StoreInformation from "../pages/Register/StoreInformation/StoreInformation";
-import Plans from "../pages/Register/Plans/Plans";
 import RegisterService from "../pages/RegisterService/RegisterService";
 import MinhaAgenda from "../pages/MinhaAgenda/MinhaAgenda";
 
@@ -20,12 +18,10 @@ const Roots = () => {
       <Route element={<SingUp />} path="/singUp" />
       <Route element={<Address />} path="/registerAddress" />
       <Route element={<StoreManager />} path="/registerStoreManager" />
-      <Route element={<StoreInformation />} path="/registerInformationStore" />
-      <Route element={<Plans />} path="/registerPlans" />
       <Route element={<RegisterService />} path="/registerServices" />
-      <Route element={<MinhaAgenda/>} path="/minhaAgenda"/>
+      <Route element={<MinhaAgenda />} path="/minhaAgenda" />
     </Routes>
   );
 };
-            
+
 export default Roots;

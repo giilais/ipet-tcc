@@ -4,8 +4,11 @@ import Map from "../../../components/Map/Map";
 import { Box, LinearProgress, Typography } from "@mui/material";
 import imgDogPaw from "../../../../src/assests/images/dog-paw.png";
 import "../../style.css";
+import { orange } from "@mui/material/colors";
 
 const Address = () => {
+  const color = orange[500];
+
   return (
     <>
       <Box
@@ -28,8 +31,8 @@ const Address = () => {
           <LinearProgress
             variant="determinate"
             value={25}
-            color="secondary"
-            sx={{ height: "8px" }}
+            color="primary"
+            sx={{ height: "8px", backgroundColor: "#FABF7C" }}
           />
         </Box>
       </Box>

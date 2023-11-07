@@ -2,43 +2,35 @@ import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { get, push, ref, set } from "firebase/database";
+import { push, ref, set } from "firebase/database";
 import db from "../../services/firebaseConfig";
 
 const FormAddress = (props) => {
-  const { register, handleSubmit, setValue, setFocus } = useForm();
+  // const { register, handleSubmit, setValue, setFocus } = useForm();
+  const { register, setValue, setFocus, handleSubmit } = useForm();
 
-  const [cep, setCep] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-
-  const navigate = useNavigate();
 
   const onSubmit = (e) => {
     console.log(e);
   };
 
-  const checkCEP = (e) => {
-    const cep = e.target.value.replace(/\D/g, "");
-    console.log(cep);
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        // register({ name: 'address', value: data.logradouro });
-        setValue("address", data.logradouro);
-        setValue("neighborhood", data.bairro);
-        setValue("city", data.localidade);
-        setValue("uf", data.uf);
-        setFocus("addressNumber");
+  const [dataCEP, setDataCEP] = useState({
+    cep: "",
+    uf: "",
+    city: "",
+    neighborhood: "",
+    address: "",
+    addressNumber: "",
+    complement: "",
+  });
 
-        cadastrarEndereco(data); // Passando os dados do CEP para cadastrarEndereco
-      });
-  };
+  const navigate = useNavigate();
 
   const convertCEP = (e) => {
     fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${cep}&key=`
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${dataCEP.cep}&key=SUA_CHAVE`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -55,32 +47,57 @@ const FormAddress = (props) => {
       });
   };
 
-  const cadastrarEndereco = async (dataCEP) => {
+  const checkCEP = (e) => {
+    const cep = e.target.value.replace(/\D/g, "");
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("checkCEP:", data);
+        setValue("address", data.logradouro);
+        setValue("neighborhood", data.bairro);
+        setValue("city", data.localidade);
+        setValue("uf", data.uf);
+        setFocus("addressNumber");
+        setDataCEP({
+          cep: data.cep,
+          uf: data.uf,
+          city: data.localidade,
+          neighborhood: data.bairro,
+          address: data.logradouro,
+          addressNumber: "",
+          complement: "",
+        });
+      });
+  };
+
+  const cadastrarEndereco = async () => {
     try {
       let usuario = localStorage.getItem("nameUsuario");
 
-      // Verificar se a variável usuario não é nula e não está vazia
       if (
         usuario &&
         usuario.length > 2 &&
         usuario.charAt(0) === '"' &&
         usuario.charAt(usuario.length - 1) === '"'
       ) {
-        usuario = usuario.slice(1, -1); //retirando as aspas
+        usuario = usuario.slice(1, -1);
       }
 
       if (usuario) {
         convertCEP();
-        const clienteRef = push(
+
+        const clienteEnderecoRef = push(
           ref(db, "IpetClientsWeb/" + usuario + "/endereco")
         );
 
-        set(clienteRef, {
+        const enderecoData = {
           longitude,
           latitude,
           ...dataCEP,
-        }).then(() => {
-          alert("Endereço cadastrado com sucesso! ");
+        };
+
+        set(clienteEnderecoRef, enderecoData).then(() => {
+          alert("Endereço cadastrado com sucesso!");
           navigate("/registerStoreManager");
         });
       } else {
@@ -158,7 +175,11 @@ const FormAddress = (props) => {
                 sx={{ width: "750px" }}
               />
               <br></br>
-              <a href="https://buscacepinter.correios.com.br/app/endereco/index.php">
+              <a
+                href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Descubra seu CEP
               </a>
             </Grid>
@@ -237,14 +258,21 @@ const FormAddress = (props) => {
             <Button
               type="submit"
               sx={{
-                backgroundColor: "#000000",
-                width: "200px",
+                color: "#fff",
+                backgroundColor: "#000",
+                "&:hover": {
+                  backgroundColor: "#fff",
+                  color: "#000",
+                  transition: "400ms",
+                  boxShadow: "10px 10px 15px 10px #FABF7C",
+                },
+                width: "300px",
                 height: "45px",
+                borderRadius: "15px",
                 fontFamily: "Montserrat",
-                fontWeight: 500,
-                fontSize: "15px",
-                color: "#FFF",
-                mt: 1,
+                fontWeight: "600",
+                textTransform: "uppercase",
+                marginTop: "30px",
               }}
               onClick={cadastrarEndereco}
             >

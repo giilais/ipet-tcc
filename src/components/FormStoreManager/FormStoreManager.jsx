@@ -1,16 +1,59 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import React from "react";
+import { push, ref, set } from "firebase/database";
+import InputMask from 'react-input-mask';
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import db from "../../services/firebaseConfig";
 
 const FormStoreManager = () => {
-  const { register, handleSubmit } = useForm();
+  const { handleSubmit } = useForm();
+
+  const [nameRes, setNameRes] = useState("");
+  const [cpf, setCPF] = useState("");
 
   const onSubmit = (e) => {
     console.log(e);
   };
 
   const navigate = useNavigate();
+
+  const cadastrarInformacoes = async () => {
+    try {
+      let usuario = localStorage.getItem("nameUsuario");
+
+      if (
+        usuario &&
+        usuario.length > 2 &&
+        usuario.charAt(0) === '"' &&
+        usuario.charAt(usuario.length - 1) === '"'
+      ) {
+        usuario = usuario.slice(1, -1);
+      }
+
+      if (usuario) {
+        const clienteInfoRef = push(
+          ref(db, "IpetClientsWeb/" + usuario + "/responsavelLoja")
+        );
+
+        const infoData = {
+          nomeResponsavel: nameRes,
+          cpf: cpf,
+        };
+
+        set(clienteInfoRef, infoData).then(() => {
+          alert("Informações cadastrado com sucesso!");
+          navigate("/home");
+        });
+      } else {
+        alert(
+          "Usuário não encontrado. Por favor, cadastre o usuário primeiro."
+        );
+      }
+    } catch (error) {
+      alert(`Erro ao cadastrar endereço: ${error.message}`);
+    }
+  };
 
   return (
     <Box
@@ -71,10 +114,10 @@ const FormStoreManager = () => {
               <Typography variant="p">Nome completo</Typography>
               <br></br>
               <TextField
-                id="neighborhood"
+                id="nameRes"
                 variant="outlined"
                 type="text"
-                {...register("neighborhood")}
+                onChange={(e) => setNameRes(e.target.value)}
                 sx={{ width: "750px" }}
               />
             </Grid>
@@ -82,13 +125,9 @@ const FormStoreManager = () => {
             <Grid item xs={12} sx={{ mb: 4 }}>
               <Typography variant="p">CPF do responsável legal</Typography>
               <br></br>
-              <TextField
-                id="address"
-                variant="outlined"
-                type="text"
-                {...register("address")}
-                sx={{ width: "750px" }}
-              />
+              <InputMask mask="999.999.999-99" value={cpf} onChange={(e) => setCPF(e.target.value)}>
+    {() => <TextField id="cpf" variant="outlined" type="text" sx={{ width: "750px" }} />}
+  </InputMask>
             </Grid>
           </Grid>
 
@@ -96,16 +135,23 @@ const FormStoreManager = () => {
             <Button
               type="submit"
               sx={{
-                backgroundColor: "#000000",
-                width: "200px",
+                color: "#fff",
+                backgroundColor: "#000",
+                "&:hover": {
+                  backgroundColor: "#fff",
+                  color: "#000",
+                  transition: "400ms",
+                  boxShadow: "10px 10px 15px 10px #FABF7C",
+                },
+                width: "300px",
                 height: "45px",
+                borderRadius: "15px",
                 fontFamily: "Montserrat",
-                fontWeight: 300,
-                fontSize: "15px",
-                color: "#FFF",
-                mt: 1,
+                fontWeight: "600",
+                textTransform: "uppercase",
+                marginTop: "30px",
               }}
-              onClick={() => navigate("/registerInformationStore")}
+              onClick={cadastrarInformacoes}
             >
               Continuar
             </Button>

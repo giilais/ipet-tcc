@@ -20,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.45.4",
+    "react-input-mask": "^2.0.4",
     "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",
     "vanilla-masker": "^1.2.0",
