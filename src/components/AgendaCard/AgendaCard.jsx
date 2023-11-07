@@ -12,9 +12,14 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import EditAgendaModal from "../EditAgendaModal/EditAgendaModal";
 
 const AgendaCard = () => {
   const [agenda, setAgenda] = useState([]);
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editAgendaDetails, setEditAgendaDetails] = useState(null);
 
   // Recuperar o nome do usuário do localStorage
   let usuario = localStorage.getItem("nameUsuario");
@@ -50,21 +55,30 @@ const AgendaCard = () => {
 
   async function deleteAgenda(id) {
     try {
-      await remove(ref(agendaRef, id));
+      await remove(ref(db, "IpetClientsWeb/" + usuario + "/agenda/" + id));
       setAgenda((prevAgenda) =>
         prevAgenda.filter((agenda) => agenda.id !== id)
       );
+      alert("Excluido com sucesso!");
     } catch (error) {
       alert("Erro ao excluir a agenda:", error);
     }
   }
 
-  console.log("AGENDA:", agenda);
-
-  const dias = agenda?.dias || [];
+  const handleEditAgenda = (id) => {
+    const agendaToEdit = agenda.find((item) => item.id === id);
+    setEditAgendaDetails(agendaToEdit);
+    setEditModalOpen(true);
+  };
 
   return (
     <>
+      <EditAgendaModal
+        open={editModalOpen}
+        handleClose={() => setEditModalOpen(false)}
+        agendaDetails={editAgendaDetails}
+      />
+
       {agenda.map((agenda) => (
         <Accordion
           sx={{
@@ -72,7 +86,7 @@ const AgendaCard = () => {
             ml: 3,
             mr: 3,
             width: "800px",
-            backgroundColor: "#fff2f2",
+            backgroundColor: "#ffcc80",
           }}
           key={agenda.id}
         >
@@ -100,9 +114,15 @@ const AgendaCard = () => {
                   onClick={() => deleteAgenda(agenda.id)}
                 />
               </Tooltip>
+              <Tooltip title="Editar agenda">
+                <Button
+                  endIcon={<BorderColorIcon sx={{ color: "black" }} />}
+                  onClick={() => handleEditAgenda(agenda.id)}
+                />
+              </Tooltip>
             </Grid>
           </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: "#fff2f2" }}>
+          <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
             <Grid container>
               <Grid item xs={10}>
                 <Grid container>

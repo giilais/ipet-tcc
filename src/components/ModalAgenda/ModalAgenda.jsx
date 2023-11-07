@@ -258,7 +258,7 @@ const ModalAgenda = () => {
                       color: "#ffffff",
                       backgroundColor: "#000000",
                       "&:hover": {
-                        backgroundColor: "#ffffff",
+                        backgroundColor: " #ffa726",
                         color: "#000000",
                         transition: "400ms",
                       },
