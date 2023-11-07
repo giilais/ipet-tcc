@@ -26,7 +26,7 @@ const StoreManager = () => {
         <Box sx={{ width: "100%", color: "grey.500" }}>
           <LinearProgress
             variant="determinate"
-            value={50}
+            value={95}
             color="secondary"
             sx={{ height: "8px" }}
           />

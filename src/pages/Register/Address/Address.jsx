@@ -30,7 +30,7 @@ const Address = () => {
         <Box sx={{ width: "100%" }}>
           <LinearProgress
             variant="determinate"
-            value={25}
+            value={40}
             color="primary"
             sx={{ height: "8px", backgroundColor: "#FABF7C" }}
           />

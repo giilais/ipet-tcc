@@ -1,6 +1,6 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { push, ref, set } from "firebase/database";
-import InputMask from 'react-input-mask';
+import InputMask from "react-input-mask";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -125,9 +125,20 @@ const FormStoreManager = () => {
             <Grid item xs={12} sx={{ mb: 4 }}>
               <Typography variant="p">CPF do responsável legal</Typography>
               <br></br>
-              <InputMask mask="999.999.999-99" value={cpf} onChange={(e) => setCPF(e.target.value)}>
-    {() => <TextField id="cpf" variant="outlined" type="text" sx={{ width: "750px" }} />}
-  </InputMask>
+              <InputMask
+                mask="999.999.999-99"
+                value={cpf}
+                onChange={(e) => setCPF(e.target.value)}
+              >
+                {() => (
+                  <TextField
+                    id="cpf"
+                    variant="outlined"
+                    type="text"
+                    sx={{ width: "750px" }}
+                  />
+                )}
+              </InputMask>
             </Grid>
           </Grid>
 
