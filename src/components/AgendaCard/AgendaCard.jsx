@@ -157,7 +157,7 @@ const AgendaCard = () => {
                       paddingBottom: "5px",
                     }}
                   >
-                    Dias de Atendimento: {agenda?.dias.join(", ")}
+                    Dias de Atendimento: {agenda?.dias?.join(", ")}
                   </Typography>
                 </Grid>
               </Grid>

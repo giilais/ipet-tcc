@@ -32,6 +32,10 @@ function ResponsiveAppBar() {
     navigate("/minhaAgenda");
   }
 
+  function goToAgendamentos() {
+    navigate("/meusAgendamentos");
+  }
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
@@ -92,7 +96,7 @@ function ResponsiveAppBar() {
             </Button>
 
             <Button
-              onClick={goToAgenda}
+              onClick={goToAgendamentos}
               sx={{
                 my: 2,
                 color: "white",

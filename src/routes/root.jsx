@@ -8,6 +8,7 @@ import Address from "../pages/Register/Address/Address";
 import StoreManager from "../pages/Register/StoreManager/StoreManager";
 import RegisterService from "../pages/RegisterService/RegisterService";
 import MinhaAgenda from "../pages/MinhaAgenda/MinhaAgenda";
+import MeusAgendamentos from "../pages/MeusAgendamentos/MeusAgendamentos";
 
 const Roots = () => {
   return (
@@ -20,6 +21,7 @@ const Roots = () => {
       <Route element={<StoreManager />} path="/registerStoreManager" />
       <Route element={<RegisterService />} path="/registerServices" />
       <Route element={<MinhaAgenda />} path="/minhaAgenda" />
+      <Route element={<MeusAgendamentos />} path="/meusAgendamentos" />
     </Routes>
   );
 };
