@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Calendar, Badge, Whisper, Popover } from "rsuite";
 import { onValue, ref } from "firebase/database";
 import db from "../../services/firebaseConfig";
+import { Button } from "@mui/material";
 
 const CalendarComponent = () => {
   let usuario = localStorage.getItem("nameUsuario");
@@ -16,6 +17,7 @@ const CalendarComponent = () => {
   }
 
   const [agendamentos, setAgendamentos] = useState([]);
+
 
   useEffect(() => {
     const agendamentosRef = ref(
@@ -56,6 +58,8 @@ const CalendarComponent = () => {
 
     if (list.length) {
       const moreCount = list.length - displayList.length;
+
+      //se tiver mais que dois item para exibir
       const moreItem = (
         <li>
           <Whisper
@@ -71,7 +75,7 @@ const CalendarComponent = () => {
               </Popover>
             }
           >
-            <a href="/">{moreCount} more</a>
+            <Button type="text">{moreCount} +</Button>
           </Whisper>
         </li>
       );
@@ -91,7 +95,12 @@ const CalendarComponent = () => {
     return null;
   }
 
-  return <Calendar bordered renderCell={renderCell} />;
+  return (
+    <Calendar
+      bordered
+      renderCell={renderCell}
+    />
+  );
 };
 
 export default CalendarComponent;
