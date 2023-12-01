@@ -122,7 +122,7 @@ function ResponsiveAppBar() {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <PersonIcon
                   sx={{
-                    color: "#ffffff",
+                    color: "black",
                     "&:hover": {
                       color: "#ffa726",
                       transition: "400ms",

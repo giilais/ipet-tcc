@@ -36,13 +36,26 @@ const CardLogin = () => {
 
   if (user) {
     navigate("/home");
-    console.log("Entrou no user");
+    console.log("Entrou no user", user);
   }
   if (loading) {
     return <p>carregando...</p>;
   }
 
+  const clearInputs = () => {
+    setEmail("");
+    setPassword("");
+  };
+
   const AlertErrors = () => {
+    const handleAlertClose = () => {
+      setOpen(false);
+      // Limpe os campos de entrada apenas se houver um erro
+      if (error) {
+        clearInputs();
+      }
+    };
+
     return (
       <Collapse in={open}>
         <Alert
@@ -51,9 +64,7 @@ const CardLogin = () => {
               aria-label="close"
               color="inherit"
               size="small"
-              onClick={() => {
-                setOpen(false);
-              }}
+              onClick={handleAlertClose}
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>
@@ -61,7 +72,7 @@ const CardLogin = () => {
           sx={{ mb: 2 }}
           severity="error"
         >
-          Erro!
+          Erro! Email ou Senhas incorretos, tente novamente!
         </Alert>
       </Collapse>
     );
@@ -69,7 +80,7 @@ const CardLogin = () => {
 
   return (
     <>
-      {error ? <AlertErrors /> : ""}
+      {error && <AlertErrors />}
 
       <Card
         sx={{
@@ -77,7 +88,7 @@ const CardLogin = () => {
           borderRadius: "20px",
           height: "550px",
           width: "550px",
-          boxShadow: '10px 10px 25px 10px #FABF7C'
+          boxShadow: "10px 10px 25px 10px #FABF7C",
         }}
       >
         <form>
@@ -124,9 +135,8 @@ const CardLogin = () => {
               sx={{
                 width: "500px",
                 marginTop: "50px",
-                borderColor: "#000000",
+                borderColor: "black",
               }}
-              error={!email}
             />
             <TextField
               variant="outlined"
@@ -155,7 +165,6 @@ const CardLogin = () => {
                 width: "500px",
                 marginTop: "20px",
               }}
-              error={!password}
             />
           </Grid>
 
@@ -197,7 +206,11 @@ const CardLogin = () => {
           >
             Esqueceu a senha?{" "}
             <Link
-              style={{ color: "#2a2a2a", textDecoration: "none" }}
+              style={{
+                color: "#2a2a2a",
+                textDecoration: "none",
+                fontWeight: 600,
+              }}
               to="/resetPassword"
             >
               Redefinir
@@ -216,7 +229,11 @@ const CardLogin = () => {
             Não é cadastrado?{" "}
             <Link
               to="/singUp"
-              style={{ color: "#2a2a2a", textDecoration: "none" }}
+              style={{
+                color: "#2a2a2a",
+                textDecoration: "none",
+                fontWeight: 700,
+              }}
             >
               Cadastre-se
             </Link>
