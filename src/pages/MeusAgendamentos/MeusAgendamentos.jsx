@@ -157,19 +157,6 @@ const MeusAgendamentos = () => {
     }
   }, [selectedDate, agendamentosDt]);
 
-  // const handleFilterClick = () => {
-  //   if (selectedDate) {
-  //     const filteredAppointments = agendamentosDt.filter(
-  //       (appointment) =>
-  //         appointment.data === selectedDate.toISOString().split("T")[0]
-  //     );
-
-  //     setFilteredAgendamentos(filteredAppointments);
-  //   } else {
-  //     setFilteredAgendamentos([]);
-  //   }
-  // };
-
   return (
     <>
       <ResponsiveAppBar />

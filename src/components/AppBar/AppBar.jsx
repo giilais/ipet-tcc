@@ -41,16 +41,19 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "black" }}>
+    <AppBar
+      position="static"
+      sx={{ backgroundColor: "#fff", boxShadow: "2px 2px 10px #cfcfcf" }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Tooltip title="Home">
             <IconButton href="/home">
               <PetsIcon
                 sx={{
-                  color: "#ffffff",
+                  color: "#ffa726",
                   "&:hover": {
-                    color: "#ffa726",
+                    color: "#000",
                     transition: "400ms",
                   },
                 }}
@@ -63,7 +66,7 @@ function ResponsiveAppBar() {
               onClick={goTo}
               sx={{
                 my: 2,
-                color: "white",
+                color: "#000",
                 display: "block",
                 textTransform: "none",
                 fontFamily: "Montserrat",
@@ -81,7 +84,7 @@ function ResponsiveAppBar() {
               onClick={goToAgenda}
               sx={{
                 my: 2,
-                color: "white",
+                color: "#000",
                 display: "block",
                 textTransform: "none",
                 fontFamily: "Montserrat",
@@ -99,7 +102,7 @@ function ResponsiveAppBar() {
               onClick={goToAgendamentos}
               sx={{
                 my: 2,
-                color: "white",
+                color: "#000",
                 display: "block",
                 textTransform: "none",
                 fontFamily: "Montserrat",
