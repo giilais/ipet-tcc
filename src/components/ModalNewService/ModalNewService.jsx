@@ -6,6 +6,7 @@ import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import {
+  Alert,
   Checkbox,
   FormControlLabel,
   Grid,
@@ -28,7 +29,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 700,
-  height: 630,
+  height: 690,
   bgcolor: "background.paper",
   borderRadius: 3,
   boxShadow: 24,
@@ -392,8 +393,9 @@ const ModalNewService = () => {
           open={snackbarOpen}
           autoHideDuration={6000}
           onClose={() => setSnackbarOpen(false)}
-          message={snackbarMessage}
-        />
+        >
+          <Alert severity="success" sx={{width: '100%', fontWeight: 600}}>{snackbarMessage}</Alert>
+        </Snackbar>
       </div>
     </>
   );
