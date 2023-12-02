@@ -4,6 +4,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -18,8 +19,14 @@ import {
 import { getDatabase, onValue, ref, remove } from "firebase/database";
 import { firebaseApp } from "../../services/firebaseConfig";
 import notFoundService from "../../assests/images/notFoundService.jpg";
+import ModaEditService from "../EditServiceModal/EditServiceModal";
 
 const CardService = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  //chamando os dados do firebase
   const db = getDatabase(firebaseApp);
 
   let usuario = localStorage.getItem("nameUsuario");
@@ -62,8 +69,7 @@ const CardService = () => {
     };
   }, [servicesRef]);
 
-  const [open, setOpen] = useState(false);
-
+  //funcao para deletar os serviços
   async function deleteService(id) {
     try {
       await remove(ref(db, "IpetClientsWeb/" + usuario + "/servicos/" + id));
@@ -76,6 +82,14 @@ const CardService = () => {
     }
   }
 
+  //funcao para editar os serviços
+  const editService = (id) => {
+    const serviceToEdit = services.find((service) => service.id === id);
+    setEditingService(serviceToEdit);
+    setIsModalOpen(true);
+  };
+
+  //mensagens de alerta
   const AlertMsgSuccess = () => {
     const handleAlertClose = () => {
       setOpen(false);
@@ -139,6 +153,12 @@ const CardService = () => {
                 </Grid>
 
                 <Grid container justifyContent={"end"}>
+                  <Tooltip title="Editar serviço">
+                    <Button
+                      endIcon={<BorderColorIcon sx={{ color: "black" }} />}
+                      onClick={() => editService(service.id)}
+                    />
+                  </Tooltip>
                   <Tooltip title="Deletar serviço">
                     <Button
                       endIcon={<DeleteIcon sx={{ color: "black" }} />}
@@ -211,23 +231,6 @@ const CardService = () => {
                       </Grid>
                     </Grid>
                   </Grid>
-
-                  {/* <Grid item xs={2}>
-                <Button
-                  sx={{
-                    fontFamily: "Montserrat",
-                    color: "#ffffff",
-                    backgroundColor: "#000000",
-                    "&:hover": {
-                      backgroundColor: " #ffffff",
-                      color: "#000000",
-                      transition: "400ms",
-                    },
-                  }}
-                >
-                  Editar
-                </Button>
-              </Grid> */}
                 </Grid>
               </AccordionDetails>
             </Accordion>
@@ -263,6 +266,19 @@ const CardService = () => {
           </>
         )}
       </Box>
+
+      {/* Modal de Edição */}
+      <ModaEditService
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingService(null);
+        }}
+        onSave={() => {
+          setIsModalOpen(false);
+        }}
+        service={editingService || {}}
+      />
     </>
   );
 };
