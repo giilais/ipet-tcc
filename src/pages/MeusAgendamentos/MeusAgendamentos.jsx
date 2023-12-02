@@ -7,101 +7,197 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   Tooltip,
   Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CancelIcon from "@mui/icons-material/Cancel";
 import CalendarComponent from "../../components/Calendar/Calendar";
 import { DatePicker } from "rsuite";
-import { onValue, ref } from "firebase/database";
+import { onValue, ref, remove } from "firebase/database";
 import db from "../../services/firebaseConfig";
 
 const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
-  return filteredAgendamentos.map((appointment) => (
-    <Accordion
-      sx={{
-        mt: 5,
-        ml: 3,
-        mr: 3,
-        width: "800px",
-        backgroundColor: "#ffcc80",
-      }}
-      key={appointment.id}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon sx={{ color: "black" }} />}
-        aria-controls="panel1a-content"
-        id="panel1a-header"
-      >
-        <Grid container>
-          <Typography
+  const [open, setOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+
+  const handleClickOpen = (appointment) => {
+    setSelectedAppointment(appointment);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCancelAgendamento = () => {
+    let usuario = localStorage.getItem("nameUsuario");
+
+    if (
+      usuario &&
+      usuario.length > 2 &&
+      usuario.charAt(0) === '"' &&
+      usuario.charAt(usuario.length - 1) === '"'
+    ) {
+      usuario = usuario.slice(1, -1);
+    }
+
+    const agendamentosRef = ref(
+      db,
+      "IpetClientsWeb/" + usuario + "/agendamentos/" + selectedAppointment.id
+    );
+
+    remove(agendamentosRef)
+      .then(() => {
+        alert("Agendamento cancelado com sucesso!");
+      })
+      .catch((error) => {
+        alert("erro:", error.message);
+      });
+    handleClose();
+  };
+
+  return (
+    <>
+      {filteredAgendamentos.map((appointment) => (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Accordion
+            sx={{
+              mt: 5,
+              ml: 3,
+              mr: 3,
+              mb: 2,
+              width: "800px",
+              backgroundColor: "#ffcc80",
+            }}
+            key={appointment.id}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: "black" }} />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Grid container>
+                <Typography
+                  sx={{
+                    fontFamily: "Montserrat",
+                    fontSize: "20px",
+                    fontWeight: 600,
+                  }}
+                >
+                  Serviço: {appointment.servico}
+                </Typography>
+              </Grid>
+
+              <Grid container justifyContent={"end"}>
+                <Tooltip title="Cancelar agendamento" key={appointment.id}>
+                  <Button
+                    endIcon={<CancelIcon sx={{ color: "black" }} />}
+                    onClick={() => handleClickOpen(appointment)}
+                  />
+                </Tooltip>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
+              <Grid container>
+                <Grid item xs={10}>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Montserrat",
+                          fontSize: "16px",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        Horário: {appointment.horario}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Montserrat",
+                          fontSize: "16px",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        Cliente: {appointment.nomeCliente}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </Box>
+      ))}
+
+      {/* Botão para confirmação da exclusão  */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle
+          sx={{
+            fontFamily: "Montserrat",
+            fontSize: "20px",
+            fontWeight: 700,
+            padding: 2,
+            color: "#000000",
+          }}
+        >
+          Confirmar Cancelamento
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
             sx={{
               fontFamily: "Montserrat",
-              fontSize: "20px",
-              fontWeight: 600,
+              fontSize: "15px",
+              fontWeight: 500,
+              padding: 2,
+              color: "#000000",
             }}
           >
-            Serviço: {appointment.servico}
-          </Typography>
-        </Grid>
-
-        <Grid container justifyContent={"end"}>
-          <Tooltip title="Deletar serviço">
-            <Button endIcon={<DeleteIcon sx={{ color: "black" }} />} />
-          </Tooltip>
-        </Grid>
-      </AccordionSummary>
-      <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
-        <Grid container>
-          <Grid item xs={10}>
-            <Grid container>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    fontFamily: "Montserrat",
-                    fontSize: "16px",
-                    paddingBottom: "5px",
-                  }}
-                >
-                  Horário: {appointment.horario}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  sx={{
-                    fontFamily: "Montserrat",
-                    fontSize: "16px",
-                    paddingBottom: "5px",
-                  }}
-                >
-                  Cliente: {appointment.nomeCliente}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={2}>
-            <Button
-              sx={{
-                fontFamily: "Montserrat",
-                color: "#ffffff",
-                backgroundColor: "#000000",
-                "&:hover": {
-                  backgroundColor: " #ffffff",
-                  color: "#000000",
-                  transition: "400ms",
-                },
-              }}
-            >
-              Editar
-            </Button>
-          </Grid>
-        </Grid>
-      </AccordionDetails>
-    </Accordion>
-  ));
+            <b>Tem certeza de que deseja cancelar o agendamento?</b>
+            <br></br>
+            Agendamento: {selectedAppointment?.nomeCliente} -
+            {selectedAppointment?.servico} - {selectedAppointment?.horario}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleClose}
+            sx={{
+              fontFamily: "Montserrat",
+              fontSize: "15px",
+              fontWeight: 500,
+              padding: 2,
+              color: "#000000",
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleCancelAgendamento}
+            sx={{
+              fontFamily: "Montserrat",
+              fontSize: "15px",
+              fontWeight: 500,
+              padding: 2,
+              color: "#000000",
+            }}
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 };
 
 const MeusAgendamentos = () => {
@@ -197,6 +293,8 @@ const MeusAgendamentos = () => {
       {filteredAgendamentos.length > 0 && (
         <FilteredAppointmentsCard filteredAgendamentos={filteredAgendamentos} />
       )}
+
+      <br></br>
     </>
   );
 };

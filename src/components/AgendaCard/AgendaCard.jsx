@@ -17,15 +17,14 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
-import EditAgendaModal from "../EditAgendaModal/EditAgendaModal";
 import notFoundService from "../../assests/images/notFoundService.jpg";
 import CloseIcon from "@mui/icons-material/Close";
+
 
 const AgendaCard = () => {
   const [agenda, setAgenda] = useState([]);
   const [open, setOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editAgendaDetails, setEditAgendaDetails] = useState(null);
+
 
   // Recuperar o nome do usuário do localStorage
   let usuario = localStorage.getItem("nameUsuario");
@@ -71,12 +70,6 @@ const AgendaCard = () => {
     }
   }
 
-  const handleEditAgenda = (id) => {
-    const agendaToEdit = agenda.find((item) => item.id === id);
-    setEditAgendaDetails(agendaToEdit);
-    setEditModalOpen(true);
-  };
-
   //mensagens de alerta
   const AlertMsgSuccess = () => {
     return (
@@ -106,12 +99,6 @@ const AgendaCard = () => {
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <AlertMsgSuccess />
       </Box>
-
-      <EditAgendaModal
-        open={editModalOpen}
-        handleClose={() => setEditModalOpen(false)}
-        agendaDetails={editAgendaDetails}
-      />
 
       {agenda.length > 0 ? (
         agenda.map((agenda) => (
@@ -152,7 +139,7 @@ const AgendaCard = () => {
                 <Tooltip title="Editar agenda">
                   <Button
                     endIcon={<BorderColorIcon sx={{ color: "black" }} />}
-                    onClick={() => handleEditAgenda(agenda.id)}
+                    onClick={() => 'oi'}
                   />
                 </Tooltip>
               </Grid>
@@ -161,7 +148,7 @@ const AgendaCard = () => {
               <Grid container>
                 <Grid item xs={10}>
                   <Grid container>
-                    <Grid item xs={6}>
+                    <Grid item xs={8}>
                       <Typography
                         sx={{
                           fontFamily: "Montserrat",
@@ -169,7 +156,8 @@ const AgendaCard = () => {
                           paddingBottom: "5px",
                         }}
                       >
-                        Horario de Inicio de Atendimento: {agenda.horarioInicio}
+                        <b>Horário de Início de Atendimento:</b>
+                        {agenda.horarioInicio}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -180,7 +168,8 @@ const AgendaCard = () => {
                           paddingBottom: "5px",
                         }}
                       >
-                        Horario de Fim de Atendimento: {agenda.horarioFim}
+                        <b>Horario de Fim de Atendimento:</b>{" "}
+                        {agenda.horarioFim}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -192,7 +181,8 @@ const AgendaCard = () => {
                         paddingBottom: "5px",
                       }}
                     >
-                      Dias de Atendimento: {agenda?.dias?.join(", ")}
+                      <b>Dias de Atendimento: </b>
+                      {agenda?.dias?.join(", ")}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -228,6 +218,7 @@ const AgendaCard = () => {
           </Grid>
         </Grid>
       )}
+
     </>
   );
 };
