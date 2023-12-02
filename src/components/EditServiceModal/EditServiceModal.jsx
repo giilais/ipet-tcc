@@ -23,7 +23,6 @@ import { ref, push, get, update } from "firebase/database";
 import db from "../../services/firebaseConfig";
 import { useEffect } from "react";
 
-
 const ModaEditService = ({ isOpen, onClose, onSave, service }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");

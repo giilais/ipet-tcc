@@ -5,8 +5,12 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Alert,
+  Box,
   Button,
+  Collapse,
   Grid,
+  IconButton,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -14,10 +18,12 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import EditAgendaModal from "../EditAgendaModal/EditAgendaModal";
+import notFoundService from "../../assests/images/notFoundService.jpg";
+import CloseIcon from "@mui/icons-material/Close";
 
 const AgendaCard = () => {
   const [agenda, setAgenda] = useState([]);
-
+  const [open, setOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editAgendaDetails, setEditAgendaDetails] = useState(null);
 
@@ -59,7 +65,7 @@ const AgendaCard = () => {
       setAgenda((prevAgenda) =>
         prevAgenda.filter((agenda) => agenda.id !== id)
       );
-      alert("Excluido com sucesso!");
+      setOpen(true);
     } catch (error) {
       alert("Erro ao excluir a agenda:", error);
     }
@@ -71,62 +77,114 @@ const AgendaCard = () => {
     setEditModalOpen(true);
   };
 
+  //mensagens de alerta
+  const AlertMsgSuccess = () => {
+    return (
+      <Collapse in={open}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={setOpen(false)}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 5 }}
+          severity="success"
+        >
+          Excluído com sucesso!
+        </Alert>
+      </Collapse>
+    );
+  };
+
   return (
     <>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <AlertMsgSuccess />
+      </Box>
+
       <EditAgendaModal
         open={editModalOpen}
         handleClose={() => setEditModalOpen(false)}
         agendaDetails={editAgendaDetails}
       />
 
-      {agenda.map((agenda) => (
-        <Accordion
-          sx={{
-            mt: 5,
-            ml: 3,
-            mr: 3,
-            width: "800px",
-            backgroundColor: "#ffcc80",
-          }}
-          key={agenda.id}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: "black" }} />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
+      {agenda.length > 0 ? (
+        agenda.map((agenda) => (
+          <Accordion
+            sx={{
+              mt: 5,
+              ml: 3,
+              mr: 25,
+              width: "800px",
+              backgroundColor: "#ffcc80",
+            }}
+            key={agenda.id}
           >
-            <Grid container>
-              <Typography
-                sx={{
-                  fontFamily: "Montserrat",
-                  fontSize: "20px",
-                  fontWeight: 600,
-                }}
-              >
-                Minha Agenda
-              </Typography>
-            </Grid>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: "black" }} />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Grid container>
+                <Typography
+                  sx={{
+                    fontFamily: "Montserrat",
+                    fontSize: "20px",
+                    fontWeight: 600,
+                  }}
+                >
+                  Minha Agenda
+                </Typography>
+              </Grid>
 
-            <Grid container justifyContent={"end"}>
-              <Tooltip title="Deletar agenda">
-                <Button
-                  endIcon={<DeleteIcon sx={{ color: "black" }} />}
-                  onClick={() => deleteAgenda(agenda.id)}
-                />
-              </Tooltip>
-              <Tooltip title="Editar agenda">
-                <Button
-                  endIcon={<BorderColorIcon sx={{ color: "black" }} />}
-                  onClick={() => handleEditAgenda(agenda.id)}
-                />
-              </Tooltip>
-            </Grid>
-          </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
-            <Grid container>
-              <Grid item xs={10}>
-                <Grid container>
-                  <Grid item xs={6}>
+              <Grid container justifyContent={"end"}>
+                <Tooltip title="Deletar agenda">
+                  <Button
+                    endIcon={<DeleteIcon sx={{ color: "black" }} />}
+                    onClick={() => deleteAgenda(agenda.id)}
+                  />
+                </Tooltip>
+                <Tooltip title="Editar agenda">
+                  <Button
+                    endIcon={<BorderColorIcon sx={{ color: "black" }} />}
+                    onClick={() => handleEditAgenda(agenda.id)}
+                  />
+                </Tooltip>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
+              <Grid container>
+                <Grid item xs={10}>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Montserrat",
+                          fontSize: "16px",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        Horario de Inicio de Atendimento: {agenda.horarioInicio}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Montserrat",
+                          fontSize: "16px",
+                          paddingBottom: "5px",
+                        }}
+                      >
+                        Horario de Fim de Atendimento: {agenda.horarioFim}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Grid container>
                     <Typography
                       sx={{
                         fontFamily: "Montserrat",
@@ -134,37 +192,42 @@ const AgendaCard = () => {
                         paddingBottom: "5px",
                       }}
                     >
-                      Horario de Inicio de Atendimento: {agenda.horarioInicio}
+                      Dias de Atendimento: {agenda?.dias?.join(", ")}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Typography
-                      sx={{
-                        fontFamily: "Montserrat",
-                        fontSize: "16px",
-                        paddingBottom: "5px",
-                      }}
-                    >
-                      Horario de Fim de Atendimento: {agenda.horarioFim}
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid container>
-                  <Typography
-                    sx={{
-                      fontFamily: "Montserrat",
-                      fontSize: "16px",
-                      paddingBottom: "5px",
-                    }}
-                  >
-                    Dias de Atendimento: {agenda?.dias?.join(", ")}
-                  </Typography>
                 </Grid>
               </Grid>
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-      ))}
+            </AccordionDetails>
+          </Accordion>
+        ))
+      ) : (
+        <Grid container sx={{ mr: 20 }}>
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                height: 600,
+                marginTop: 15,
+              }}
+            >
+              <img src={notFoundService} alt="By storyset on Freepik" />
+            </Box>
+          </Grid>
+          <Grid item xs={12} container justifyContent={"center"}>
+            <Typography
+              variant="p"
+              sx={{
+                fontFamily: "Montserrat",
+                fontSize: "20px",
+                fontWeight: 600,
+              }}
+            >
+              Não há serviços cadastrados!{" "}
+            </Typography>
+          </Grid>
+        </Grid>
+      )}
     </>
   );
 };
