@@ -20,11 +20,9 @@ import BorderColorIcon from "@mui/icons-material/BorderColor";
 import notFoundService from "../../assests/images/notFoundService.jpg";
 import CloseIcon from "@mui/icons-material/Close";
 
-
 const AgendaCard = () => {
   const [agenda, setAgenda] = useState([]);
   const [open, setOpen] = useState(false);
-
 
   // Recuperar o nome do usuário do localStorage
   let usuario = localStorage.getItem("nameUsuario");
@@ -80,12 +78,18 @@ const AgendaCard = () => {
               aria-label="close"
               color="inherit"
               size="small"
-              onClick={setOpen(false)}
+              onClick={() => setOpen(false)}
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>
           }
-          sx={{ mb: 5 }}
+          sx={{
+            mb: 3,
+            position: "fixed",
+            top: 20,
+            left: 20,
+            mt: 15,
+          }}
           severity="success"
         >
           Excluído com sucesso!
@@ -96,9 +100,7 @@ const AgendaCard = () => {
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <AlertMsgSuccess />
-      </Box>
+      <AlertMsgSuccess />
 
       {agenda.length > 0 ? (
         agenda.map((agenda) => (
@@ -106,7 +108,7 @@ const AgendaCard = () => {
             sx={{
               mt: 5,
               ml: 3,
-              mr: 25,
+              mr: 5,
               width: "800px",
               backgroundColor: "#ffcc80",
             }}
@@ -139,7 +141,7 @@ const AgendaCard = () => {
                 <Tooltip title="Editar agenda">
                   <Button
                     endIcon={<BorderColorIcon sx={{ color: "black" }} />}
-                    onClick={() => 'oi'}
+                    onClick={() => "oi"}
                   />
                 </Tooltip>
               </Grid>
@@ -213,12 +215,11 @@ const AgendaCard = () => {
                 fontWeight: 600,
               }}
             >
-              Não há serviços cadastrados!{" "}
+              Não há agenda cadastrada!{" "}
             </Typography>
           </Grid>
         </Grid>
       )}
-
     </>
   );
 };

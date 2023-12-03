@@ -4,20 +4,23 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
+import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import {
+  Alert,
   Chip,
+  Collapse,
   Grid,
+  IconButton,
   MenuItem,
   OutlinedInput,
   Select,
-  Snackbar,
   TextField,
 } from "@mui/material";
 import "date-fns";
 import { useState } from "react";
 
-import { ref, push, set } from "firebase/database";
+import { ref, push, set, get } from "firebase/database";
 import db from "../../services/firebaseConfig";
 
 const style = {
@@ -34,8 +37,8 @@ const style = {
 };
 const ModalAgenda = () => {
   const [open, setOpen] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertError, setAlertErrorOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -75,7 +78,7 @@ const ModalAgenda = () => {
     );
   };
 
-  const cadastrarAgenda = () => {
+  const cadastrarAgenda = async () => {
     let usuario = localStorage.getItem("nameUsuario");
 
     // Verificar se a variável usuario não é nula e não está vazia
@@ -85,31 +88,108 @@ const ModalAgenda = () => {
       usuario.charAt(0) === '"' &&
       usuario.charAt(usuario.length - 1) === '"'
     ) {
-      usuario = usuario.slice(1, -1); //retirando as aspas
+      usuario = usuario.slice(1, -1); // retirando as aspas
     }
 
-    const agendaRef = push(ref(db, "IpetClientsWeb/" + usuario + "/agenda"));
-    set(agendaRef, { horarioInicio, horarioFim, dias })
-      .then(() => {
-        showSnackbar("Agenda cadastrado com sucesso!");
+    const agendaRef = ref(db, "IpetClientsWeb/" + usuario + "/agenda");
+
+    try {
+      const snapshot = await get(agendaRef);
+
+      // Verificar se já existe uma agenda
+      if (snapshot.exists()) {
+        // Já existe uma agenda, mostrar mensagem de erro
+        setAlertErrorOpen(true);
+        handleClose();
+      } else {
+        // Não existe uma agenda, realizar o cadastro
+        const newAgendaRef = push(agendaRef);
+        await set(newAgendaRef, { horarioInicio, horarioFim, dias });
+        setAlertOpen(true);
         setOpen(false);
         setHorarioFim("");
         setHorarioInicio("");
-        dias([]);
-      })
-      .catch((error) => {
-        showSnackbar(`Erro ao criar agenda: ${error.message}`);
-      });
+        setDias([]);
+      }
+    } catch (error) {
+      alert(`Erro ao verificar/agendar: ${error.message}`);
+    }
   };
 
-  const showSnackbar = (message) => {
-    setSnackbarMessage(message);
-    setSnackbarOpen(true);
+  //mensagens de alerta
+  const AlertMsgSuccess = () => {
+    const handleAlertClose = () => {
+      setAlertOpen(false);
+    };
+
+    return (
+      <Collapse in={alertOpen}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={handleAlertClose}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          severity="success"
+          sx={{
+            mb: 3,
+            position: "fixed",
+            top: 20,
+            left: 20,
+            mt: 15,
+          }}
+        >
+          Agenda cadastrada com sucesso!
+        </Alert>
+      </Collapse>
+    );
+  };
+
+  //mensagens de alerta
+  const AlertMsgError = () => {
+    const handleAlertClose = () => {
+      setAlertErrorOpen(false);
+    };
+
+    return (
+      <Collapse in={alertError}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={handleAlertClose}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          severity="error"
+          sx={{
+            mb: 3,
+            mt: 15,
+            position: "fixed",
+            top: 20,
+            left: 20,
+          }}
+        >
+          Erro ao cadastrar agenda! Você já tem uma agenda cadastrada
+        </Alert>
+      </Collapse>
+    );
   };
 
   return (
     <>
       <div>
+        <AlertMsgSuccess />
+        <AlertMsgError />
+
         <Grid container>
           <Button
             onClick={handleOpen}
@@ -275,13 +355,6 @@ const ModalAgenda = () => {
             </Box>
           </Fade>
         </Modal>
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={() => setSnackbarOpen(false)}
-          message={snackbarMessage}
-        />
       </div>
     </>
   );
