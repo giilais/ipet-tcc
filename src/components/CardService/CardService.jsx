@@ -179,7 +179,8 @@ const CardService = () => {
                             paddingBottom: "5px",
                           }}
                         >
-                          Preço: {service.preco}
+                          <b>Preço: </b>
+                          {service.preco}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
@@ -190,7 +191,8 @@ const CardService = () => {
                             paddingBottom: "5px",
                           }}
                         >
-                          Tempo: {service.tempo}
+                          <b>Tempo: </b>
+                          {service.tempo}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -202,7 +204,7 @@ const CardService = () => {
                           paddingBottom: "5px",
                         }}
                       >
-                        Descrição: {service.descricao}
+                        <b>Descrição:</b> {service.descricao}
                       </Typography>
                     </Grid>
 
@@ -215,7 +217,10 @@ const CardService = () => {
                             paddingBottom: "5px",
                           }}
                         >
-                          Animais: {service.animais}
+                          <b>Animais:</b>
+                          {Array.isArray(service?.animais)
+                            ? service.animais.join(", ")
+                            : service?.animais}
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
@@ -226,7 +231,10 @@ const CardService = () => {
                             paddingBottom: "5px",
                           }}
                         >
-                          Porte: {service.porte}
+                          <b>Porte:</b>
+                          {Array.isArray(service?.porte)
+                            ? service.porte.join(", ")
+                            : service?.porte}
                         </Typography>
                       </Grid>
                     </Grid>

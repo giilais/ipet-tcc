@@ -8,10 +8,12 @@ import Typography from "@mui/material/Typography";
 import {
   Alert,
   Checkbox,
+  Chip,
   FormControlLabel,
   Grid,
   InputAdornment,
   MenuItem,
+  OutlinedInput,
   Select,
   Snackbar,
   TextField,
@@ -43,16 +45,48 @@ const ModalNewService = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
+  const animals = ["Cachorro", "Gato"];
+  const sizeAnimals = ["Pequeno", "Médio", "Grande"];
+
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setAnimais((prevValues) => {
+      const newValues = Array.isArray(value) ? value : [value];
+      return newValues;
+    });
+  };
+
+  const handleChangeSizeAnimals = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setPorte((prevValues) => {
+      const newValues = Array.isArray(value) ? value : [value];
+      return newValues;
+    });
+  };
+
   const [servicos, setServicos] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [animais, setAnimais] = useState("");
-  const [porte, setPorte] = useState("");
+  const [animais, setAnimais] = useState([]);
+  const [porte, setPorte] = useState([]);
   const [tempo, setTempo] = useState("");
   const [preco, setPreco] = useState("");
 
   const [servicosOptions, setServicosOptions] = useState([]);
-  const [animaisOptions, setAnimaisOptions] = useState([]);
-  const [porteOptions, setPorteOptions] = useState([]);
 
   const [marcarMaisDeUm, setMarcarMaisDeUm] = useState(false);
   const [numeroDeServicos, setNumeroDeServicos] = useState(0);
@@ -71,38 +105,8 @@ const ModalNewService = () => {
     }
   };
 
-  // Função para carregar as opções de animais do Firebase
-  const carregarOpcoesAnimais = async () => {
-    const animaisRef = ref(db, "animais");
-
-    try {
-      const snapshot = await get(animaisRef);
-      if (snapshot.exists()) {
-        setAnimaisOptions(Object.values(snapshot.val()));
-      }
-    } catch (error) {
-      console.error("Erro ao carregar opções de animais:", error);
-    }
-  };
-
-  // Função para carregar as opções de porte do Firebase
-  const carregarOpcoesPorte = async () => {
-    const porteRef = ref(db, "porte");
-
-    try {
-      const snapshot = await get(porteRef);
-      if (snapshot.exists()) {
-        setPorteOptions(Object.values(snapshot.val()));
-      }
-    } catch (error) {
-      console.error("Erro ao carregar opções de porte:", error);
-    }
-  };
-
   useEffect(() => {
     carregarOpcoesServicos();
-    carregarOpcoesPorte();
-    carregarOpcoesAnimais();
   }, []);
 
   const cadastrarServico = async () => {
@@ -130,6 +134,8 @@ const ModalNewService = () => {
           porte,
           tempo,
           preco,
+          marcarMaisDeUm,
+          numeroDeServicos,
         };
 
         set(servicosRef, servicosData).then(() => {
@@ -151,8 +157,8 @@ const ModalNewService = () => {
   const limparDados = () => {
     setServicos("");
     setDescricao("");
-    setAnimais("");
-    setPorte("");
+    setAnimais([]);
+    setPorte([]);
     setTempo("");
     setPreco("");
   };
@@ -271,18 +277,30 @@ const ModalNewService = () => {
                   <Grid item xs={6}>
                     <Typography variant="p">Animais: </Typography>
                     <br></br>
-
                     <Select
-                      label="Animais:"
-                      id="animais"
-                      name="animais"
-                      sx={{ width: 300 }}
+                      sx={{ maxWidth: "300px", width: "300px" }}
+                      labelId="demo-multiple-chip-label"
+                      id="demo-multiple-chip"
+                      multiple
                       value={animais}
-                      onChange={(e) => setAnimais(e.target.value)}
+                      onChange={handleChange}
+                      input={
+                        <OutlinedInput id="select-multiple-chip" label="Chip" />
+                      }
+                      renderValue={(selected) => (
+                        <Box
+                          sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
+                        >
+                          {selected.map((value) => (
+                            <Chip key={value} label={value} />
+                          ))}
+                        </Box>
+                      )}
+                      MenuProps={MenuProps}
                     >
-                      {animaisOptions.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
+                      {animals.map((name) => (
+                        <MenuItem key={name} value={name}>
+                          {name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -291,16 +309,29 @@ const ModalNewService = () => {
                     <Typography variant="p">Porte: </Typography>
                     <br></br>
                     <Select
-                      label="Porte:"
-                      id="porte"
-                      name="porte"
-                      sx={{ width: 300 }}
+                      sx={{ maxWidth: "300px", width: "300px" }}
+                      labelId="demo-multiple-chip-label"
+                      id="demo-multiple-chip"
+                      multiple
                       value={porte}
-                      onChange={(e) => setPorte(e.target.value)}
+                      onChange={handleChangeSizeAnimals}
+                      input={
+                        <OutlinedInput id="select-multiple-chip" label="Chip" />
+                      }
+                      renderValue={(selected) => (
+                        <Box
+                          sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
+                        >
+                          {selected.map((value) => (
+                            <Chip key={value} label={value} />
+                          ))}
+                        </Box>
+                      )}
+                      MenuProps={MenuProps}
                     >
-                      {porteOptions.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
+                      {sizeAnimals.map((name) => (
+                        <MenuItem key={name} value={name}>
+                          {name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -309,7 +340,9 @@ const ModalNewService = () => {
 
                 <Grid container sx={{ marginBottom: 1 }}>
                   <Grid item xs={6}>
-                    <Typography variant="p">Tempo de serviço: </Typography>
+                    <Typography variant="p">
+                      Tempo de serviço: (em minutos)
+                    </Typography>
                     <br></br>
                     <TextField
                       id="tempo"
@@ -317,6 +350,7 @@ const ModalNewService = () => {
                       sx={{ width: 300 }}
                       value={tempo}
                       onChange={(e) => setTempo(e.target.value)}
+                      type="number"
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -394,7 +428,9 @@ const ModalNewService = () => {
           autoHideDuration={6000}
           onClose={() => setSnackbarOpen(false)}
         >
-          <Alert severity="success" sx={{width: '100%', fontWeight: 600}}>{snackbarMessage}</Alert>
+          <Alert severity="success" sx={{ width: "100%", fontWeight: 600 }}>
+            {snackbarMessage}
+          </Alert>
         </Snackbar>
       </div>
     </>
