@@ -16,12 +16,12 @@ import { push, ref, set } from "firebase/database";
 import db from "../../services/firebaseConfig";
 
 const FormAddress = (props) => {
-  // const { register, handleSubmit, setValue, setFocus } = useForm();
   const { register, setValue, setFocus, handleSubmit } = useForm();
 
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState(null);
+  const [addressNumber, setAddressNumber] = useState("");
 
   const onSubmit = (e) => {
     console.log(e);
@@ -33,7 +33,6 @@ const FormAddress = (props) => {
     city: "",
     neighborhood: "",
     address: "",
-    addressNumber: "",
     complement: "",
   });
 
@@ -68,16 +67,16 @@ const FormAddress = (props) => {
         setValue("neighborhood", data.bairro);
         setValue("city", data.localidade);
         setValue("uf", data.uf);
-        setFocus("addressNumber");
         setDataCEP({
           cep: data.cep,
           uf: data.uf,
           city: data.localidade,
           neighborhood: data.bairro,
           address: data.logradouro,
-          addressNumber: "",
-          complement: "",
+          addressNumber: addressNumber,
+          complement: data.complemento,
         });
+        setFocus("addressNumber");
       });
   };
 
@@ -88,7 +87,7 @@ const FormAddress = (props) => {
       !dataCEP.city ||
       !dataCEP.neighborhood ||
       !dataCEP.address ||
-      !dataCEP.addressNumber
+      !addressNumber
     ) {
       setError("Todos os campos são obrigatórios.");
       return false;
@@ -104,7 +103,7 @@ const FormAddress = (props) => {
     }
 
     try {
-      let usuario = localStorage.getItem("nameUsuario");
+      let usuario = localStorage.getItem("userName");
 
       if (
         usuario &&
@@ -123,8 +122,11 @@ const FormAddress = (props) => {
         const enderecoData = {
           longitude,
           latitude,
+          addressNumber,
           ...dataCEP,
         };
+
+        console.log(enderecoData);
 
         set(clienteEnderecoRef, enderecoData).then(() => {
           alert("Endereço cadastrado com sucesso!");
@@ -299,7 +301,7 @@ const FormAddress = (props) => {
                   id="addressNumber"
                   variant="outlined"
                   type="text"
-                  {...register("addressNumber")}
+                  onChange={(e) => setAddressNumber(e.target.value)}
                   sx={{ width: "350px" }}
                 />
               </Grid>
@@ -310,6 +312,7 @@ const FormAddress = (props) => {
                   id="complement"
                   variant="outlined"
                   type="text"
+                  {...register("complement")}
                   sx={{ width: "350px" }}
                 />
               </Grid>

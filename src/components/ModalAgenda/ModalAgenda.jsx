@@ -79,7 +79,7 @@ const ModalAgenda = () => {
   };
 
   const cadastrarAgenda = async () => {
-    let usuario = localStorage.getItem("nameUsuario");
+    let usuario = localStorage.getItem("userName");
 
     // Verificar se a variável usuario não é nula e não está vazia
     if (

@@ -20,7 +20,7 @@ const FormStoreManager = () => {
 
   const cadastrarInformacoes = async () => {
     try {
-      let usuario = localStorage.getItem("nameUsuario");
+      let usuario = localStorage.getItem("userName");
 
       if (
         usuario &&

@@ -25,7 +25,7 @@ const AgendaCard = () => {
   const [open, setOpen] = useState(false);
 
   // Recuperar o nome do usuário do localStorage
-  let usuario = localStorage.getItem("nameUsuario");
+  let usuario = localStorage.getItem("userName");
 
   if (
     usuario &&

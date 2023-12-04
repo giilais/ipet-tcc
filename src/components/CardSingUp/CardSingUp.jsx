@@ -82,7 +82,7 @@ const CardSingUp = () => {
 
       <AlertSuccess />;
 
-      localStorage.setItem("nameUsuario", JSON.stringify(name)); //Salvando nome do usuário logado
+      localStorage.setItem("userName", JSON.stringify(name)); //Salvando nome do usuário logado
 
       navigate("/registerAddress");
     } catch (e) {

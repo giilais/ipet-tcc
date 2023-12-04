@@ -17,7 +17,8 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth } from "../../services/firebaseConfig";
+import db, { auth } from "../../services/firebaseConfig";
+import { get, onValue, ref } from "firebase/database";
 
 const CardLogin = () => {
   const [email, setEmail] = useState("");
@@ -34,9 +35,38 @@ const CardLogin = () => {
 
   const navigate = useNavigate();
 
+  const fetchUserNameFromDatabase = async (email) => {
+    try {
+      const usuariosRef = ref(db, "IpetClientsWeb");
+      const usuariosSnapshot = await get(usuariosRef);
+
+      if (usuariosSnapshot.exists()) {
+        const usuariosData = usuariosSnapshot.val();
+
+        const usuarioEncontrado = Object.values(usuariosData).find(
+          (usuario) => usuario.email === email
+        );
+
+        if (usuarioEncontrado) {
+          const userName = usuarioEncontrado.name;
+
+          localStorage.setItem("userName", userName);
+          navigate("/home");
+          console.log("Entrou no user", user);
+        } else {
+          console.error("Usuário não encontrado com o e-mail fornecido");
+        }
+      } else {
+        console.error("Dados de usuários não encontrados");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar dados do usuário", error);
+    }
+  };
+
   if (user) {
-    navigate("/home");
-    console.log("Entrou no user", user);
+    console.log("E-mail do usuário:", email);
+    fetchUserNameFromDatabase(email);
   }
   if (loading) {
     return <p>carregando...</p>;

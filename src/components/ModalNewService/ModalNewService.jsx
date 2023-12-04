@@ -111,7 +111,7 @@ const ModalNewService = () => {
 
   const cadastrarServico = async () => {
     try {
-      let usuario = localStorage.getItem("nameUsuario");
+      let usuario = localStorage.getItem("userName");
 
       if (
         usuario &&

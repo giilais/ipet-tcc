@@ -29,7 +29,7 @@ const CardService = () => {
   //chamando os dados do firebase
   const db = getDatabase(firebaseApp);
 
-  let usuario = localStorage.getItem("nameUsuario");
+  let usuario = localStorage.getItem("userName");
 
   if (
     usuario &&

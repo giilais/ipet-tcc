@@ -6,7 +6,7 @@ const Agendamentos = () => {
   const [agendamentos, setAgendamentos] = useState([]);
 
   // Recuperar o nome do usuário do localStorage
-  let usuario = localStorage.getItem("nameUsuario");
+  let usuario = localStorage.getItem("userName");
 
   if (
     usuario &&
@@ -39,7 +39,6 @@ const Agendamentos = () => {
       });
     }
   }, [agendamentosRef]);
-
 
   return (
     <div>
