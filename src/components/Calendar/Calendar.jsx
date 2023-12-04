@@ -3,10 +3,11 @@ import { Calendar, Badge, Whisper, Popover } from "rsuite";
 import { onValue, ref } from "firebase/database";
 import db from "../../services/firebaseConfig";
 import { Button } from "@mui/material";
+import { format } from "date-fns";
 
 const CalendarComponent = () => {
-  let usuario = localStorage.getItem("nameUsuario");
-
+  let usuario = localStorage.getItem("userName");
+  console.log("teste:", usuario);
   if (
     usuario &&
     usuario.length > 2 &&
@@ -17,7 +18,6 @@ const CalendarComponent = () => {
   }
 
   const [agendamentos, setAgendamentos] = useState([]);
-
 
   useEffect(() => {
     const agendamentosRef = ref(
@@ -41,9 +41,10 @@ const CalendarComponent = () => {
   }, [usuario]);
 
   function getTodoList(date) {
-    const formattedDate = date.toISOString().split("T")[0];
+    const formattedDate = format(date, "dd-MM-yyyy");
+    // const formattedDate = date.toISOString().split("T")[0];
     const eventsForDate = agendamentos.filter(
-      (agendamento) => agendamento.data === formattedDate
+      (agendamento) => agendamento.dia === formattedDate
     );
 
     return eventsForDate.map((agendamento) => ({
@@ -95,12 +96,7 @@ const CalendarComponent = () => {
     return null;
   }
 
-  return (
-    <Calendar
-      bordered
-      renderCell={renderCell}
-    />
-  );
+  return <Calendar bordered renderCell={renderCell} />;
 };
 
 export default CalendarComponent;

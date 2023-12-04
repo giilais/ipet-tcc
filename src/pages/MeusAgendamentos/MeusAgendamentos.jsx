@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./MeusAgendamentos.css";
 import "rsuite/dist/rsuite.css";
+import { format } from "date-fns";
 
 import ResponsiveAppBar from "../../components/AppBar/AppBar";
 import {
@@ -39,7 +40,7 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
   };
 
   const handleCancelAgendamento = () => {
-    let usuario = localStorage.getItem("nameUsuario");
+    let usuario = localStorage.getItem("userName");
 
     if (
       usuario &&
@@ -207,7 +208,7 @@ const MeusAgendamentos = () => {
   const [agendamentosDt, setAgendamentosDt] = useState([]);
   const [filteredAgendamentos, setFilteredAgendamentos] = useState([]);
 
-  let usuario = localStorage.getItem("nameUsuario");
+  let usuario = localStorage.getItem("userName");
 
   if (
     usuario &&
@@ -243,9 +244,9 @@ const MeusAgendamentos = () => {
   useEffect(() => {
     // Filtrar agendamentos com base na data selecionada
     if (selectedDate) {
+      const formattedDate = format(selectedDate, "dd-MM-yyyy"); // Formato da data para "dd-MM-yyyy"
       const filteredAppointments = agendamentosDt.filter(
-        (appointment) =>
-          appointment.data === selectedDate.toISOString().split("T")[0]
+        (appointment) => appointment.dia === formattedDate
       );
       setFilteredAgendamentos(filteredAppointments);
     } else {
