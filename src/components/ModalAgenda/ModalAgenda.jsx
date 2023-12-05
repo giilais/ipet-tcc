@@ -130,7 +130,9 @@ const ModalAgenda = () => {
               aria-label="close"
               color="inherit"
               size="small"
-              onClick={handleAlertClose}
+              onClick={() => {
+                handleAlertClose();
+              }}
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>

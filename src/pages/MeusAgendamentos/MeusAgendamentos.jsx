@@ -2,20 +2,23 @@ import React, { useEffect, useState } from "react";
 import "./MeusAgendamentos.css";
 import "rsuite/dist/rsuite.css";
 import { format } from "date-fns";
-
+import messaging from "@react-native-firebase/messaging";
 import ResponsiveAppBar from "../../components/AppBar/AppBar";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Alert,
   Box,
   Button,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Grid,
+  IconButton,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -23,12 +26,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CalendarComponent from "../../components/Calendar/Calendar";
 import { DatePicker } from "rsuite";
-import { onValue, ref, remove } from "firebase/database";
+import { get, onValue, ref, remove } from "firebase/database";
 import db from "../../services/firebaseConfig";
+import CloseIcon from "@mui/icons-material/Close";
 
 const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
   const [open, setOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const handleClickOpen = (appointment) => {
     setSelectedAppointment(appointment);
@@ -56,14 +61,86 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
       "IpetClientsWeb/" + usuario + "/agendamentos/" + selectedAppointment.id
     );
 
+    // Recuperar os dados do agendamento para enviar a notificação!
+    get(agendamentosRef)
+      .then((agendamentoSnapshot) => {
+        const agendamento = agendamentoSnapshot.val();
+        const userToken = agendamento.tokenUser;
+
+        if (userToken) {
+          sendNotification(
+            userToken,
+            "Infelizmente seu agendamento foi cancelado!"
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao obter dados do agendamento:", error.message);
+      });
+
+    //cancelando o agendamento!
     remove(agendamentosRef)
       .then(() => {
-        alert("Agendamento cancelado com sucesso!");
+        return <AlertMsgSuccess />;
       })
       .catch((error) => {
         alert("erro:", error.message);
       });
     handleClose();
+  };
+
+  const sendNotification = (deviceToken, message) => {
+    sendToDevice(deviceToken, message);
+  };
+
+  const sendToDevice = async (deviceToken, message) => {
+    try {
+      await messaging().sendToDevice(deviceToken, {
+        notification: {
+          title: "Título da Notificação",
+          body: message,
+        },
+      });
+      console.log("Notificação enviada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao enviar notificação:", error.message);
+    }
+  };
+
+  //mensagens de alerta
+  const AlertMsgSuccess = () => {
+    const handleAlertClose = () => {
+      setAlertOpen(false);
+    };
+
+    return (
+      <Collapse in={alertOpen}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                handleAlertClose();
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          severity="success"
+          sx={{
+            mb: 3,
+            position: "fixed",
+            top: 20,
+            left: 20,
+            mt: 15,
+          }}
+        >
+          Agendamento excluido com sucesso!
+        </Alert>
+      </Collapse>
+    );
   };
 
   return (

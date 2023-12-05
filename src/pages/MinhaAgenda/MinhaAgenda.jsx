@@ -1,6 +1,6 @@
 import React from "react";
 import ResponsiveAppBar from "../../components/AppBar/AppBar";
-import { Box, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import ModalAgenda from "../../components/ModalAgenda/ModalAgenda";
 import AgendaCard from "../../components/AgendaCard/AgendaCard";
 
