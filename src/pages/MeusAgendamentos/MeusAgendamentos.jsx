@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./MeusAgendamentos.css";
 import "rsuite/dist/rsuite.css";
 import { format } from "date-fns";
-import messaging from "@react-native-firebase/messaging";
 import ResponsiveAppBar from "../../components/AppBar/AppBar";
 import {
   Accordion,
@@ -26,7 +25,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CalendarComponent from "../../components/Calendar/Calendar";
 import { DatePicker } from "rsuite";
-import { get, onValue, ref, remove } from "firebase/database";
+import { onValue, ref, remove } from "firebase/database";
 import db from "../../services/firebaseConfig";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -61,23 +60,6 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
       "IpetClientsWeb/" + usuario + "/agendamentos/" + selectedAppointment.id
     );
 
-    // Recuperar os dados do agendamento para enviar a notificação!
-    get(agendamentosRef)
-      .then((agendamentoSnapshot) => {
-        const agendamento = agendamentoSnapshot.val();
-        const userToken = agendamento.tokenUser;
-
-        if (userToken) {
-          sendNotification(
-            userToken,
-            "Infelizmente seu agendamento foi cancelado!"
-          );
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao obter dados do agendamento:", error.message);
-      });
-
     //cancelando o agendamento!
     remove(agendamentosRef)
       .then(() => {
@@ -87,24 +69,6 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
         alert("erro:", error.message);
       });
     handleClose();
-  };
-
-  const sendNotification = (deviceToken, message) => {
-    sendToDevice(deviceToken, message);
-  };
-
-  const sendToDevice = async (deviceToken, message) => {
-    try {
-      await messaging().sendToDevice(deviceToken, {
-        notification: {
-          title: "Título da Notificação",
-          body: message,
-        },
-      });
-      console.log("Notificação enviada com sucesso!");
-    } catch (error) {
-      console.error("Erro ao enviar notificação:", error.message);
-    }
   };
 
   //mensagens de alerta

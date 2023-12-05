@@ -146,12 +146,6 @@ const AgendaCard = () => {
                       onClick={() => setOpen(true, agenda.id)}
                     />
                   </Tooltip>
-                  {/* <Tooltip title="Editar agenda">
-                  <Button
-                    endIcon={<BorderColorIcon sx={{ color: "black" }} />}
-                    onClick={() => "oi"}
-                  />
-                </Tooltip> */}
                 </Grid>
               </AccordionSummary>
               <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>

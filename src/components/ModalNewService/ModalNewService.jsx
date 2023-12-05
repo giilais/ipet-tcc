@@ -89,7 +89,7 @@ const ModalNewService = () => {
   const [servicosOptions, setServicosOptions] = useState([]);
 
   const [marcarMaisDeUm, setMarcarMaisDeUm] = useState(false);
-  const [numeroDeServicos, setNumeroDeServicos] = useState(0);
+  const [numeroDeServicos, setNumeroDeServicos] = useState("1");
 
   // Função para carregar as opções de serviços do Firebase
   const carregarOpcoesServicos = async () => {

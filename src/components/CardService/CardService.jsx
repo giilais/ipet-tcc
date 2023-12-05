@@ -12,6 +12,11 @@ import {
   Box,
   Button,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   IconButton,
   Tooltip,
@@ -20,11 +25,15 @@ import { getDatabase, onValue, ref, remove } from "firebase/database";
 import { firebaseApp } from "../../services/firebaseConfig";
 import notFoundService from "../../assests/images/notFoundService.jpg";
 import ModaEditService from "../EditServiceModal/EditServiceModal";
+import { Link } from "react-router-dom";
 
 const CardService = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
   const [open, setOpen] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState(null);
 
   //chamando os dados do firebase
   const db = getDatabase(firebaseApp);
@@ -69,14 +78,31 @@ const CardService = () => {
     };
   }, [servicesRef]);
 
-  //funcao para deletar os serviços
+  // função para abrir o diálogo de confirmação
+  const openDeleteConfirmation = (service) => {
+    setServiceToDelete(service);
+    setConfirmDelete(true);
+  };
+
+  // função para fechar o diálogo de confirmação
+  const closeDeleteConfirmation = () => {
+    setServiceToDelete(null);
+    setConfirmDelete(false);
+  };
+
+  // função para deletar os serviços
   async function deleteService(id) {
     try {
-      await remove(ref(db, "IpetClientsWeb/" + usuario + "/servicos/" + id));
-      setServices((prevServices) =>
-        prevServices.filter((service) => service.id !== id)
-      );
-      setOpen(true);
+      if (confirmDelete) {
+        await remove(ref(db, "IpetClientsWeb/" + usuario + "/servicos/" + id));
+        setServices((prevServices) =>
+          prevServices.filter((service) => service.id !== id)
+        );
+        setOpen(true);
+        closeDeleteConfirmation(); // fechar o diálogo após a exclusão
+      } else {
+        openDeleteConfirmation(services.find((service) => service.id === id));
+      }
     } catch (error) {
       alert("Erro ao excluir o serviço:", error);
     }
@@ -92,11 +118,11 @@ const CardService = () => {
   //mensagens de alerta
   const AlertMsgSuccess = () => {
     const handleAlertClose = () => {
-      setOpen(false);
+      setOpenAlert(false);
     };
 
     return (
-      <Collapse in={open}>
+      <Collapse in={openAlert}>
         <Alert
           action={
             <IconButton
@@ -126,90 +152,80 @@ const CardService = () => {
       <Box>
         {services.length > 0 ? (
           services.map((service) => (
-            <Accordion
-              sx={{
-                mt: 5,
-                mr: 25,
-                width: "800px",
-                backgroundColor: "#ffcc80",
-              }}
-              key={service.id}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon sx={{ color: "black" }} />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
+            <>
+              <Accordion
+                sx={{
+                  mt: 5,
+                  mr: 25,
+                  width: "800px",
+                  backgroundColor: "#ffcc80",
+                }}
+                key={service.id}
               >
-                <Grid container>
-                  <Typography
-                    sx={{
-                      fontFamily: "Montserrat",
-                      fontSize: "20px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Serviço: {service.servicos}
-                  </Typography>
-                </Grid>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon sx={{ color: "black" }} />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Grid container>
+                    <Typography
+                      sx={{
+                        fontFamily: "Montserrat",
+                        fontSize: "20px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Serviço: {service.servicos}
+                    </Typography>
+                  </Grid>
 
-                <Grid container justifyContent={"end"}>
-                  <Tooltip title="Editar serviço">
-                    <Button
-                      endIcon={<BorderColorIcon sx={{ color: "black" }} />}
-                      onClick={() => editService(service.id)}
-                    />
-                  </Tooltip>
-                  <Tooltip title="Deletar serviço">
-                    <Button
-                      endIcon={<DeleteIcon sx={{ color: "black" }} />}
-                      onClick={() => deleteService(service.id)}
-                    />
-                  </Tooltip>
-                </Grid>
-              </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
-                <Grid container>
-                  <Grid item xs={10}>
-                    <Grid container>
-                      <Grid item xs={6}>
-                        <Typography
-                          sx={{
-                            fontFamily: "Montserrat",
-                            fontSize: "16px",
-                            paddingBottom: "5px",
-                          }}
-                        >
-                          <b>Preço: </b>
-                          {service.preco}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography
-                          sx={{
-                            fontFamily: "Montserrat",
-                            fontSize: "16px",
-                            paddingBottom: "5px",
-                          }}
-                        >
-                          <b>Tempo: </b>
-                          {service.tempo}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid container>
-                      <Typography
-                        sx={{
-                          fontFamily: "Montserrat",
-                          fontSize: "16px",
-                          paddingBottom: "5px",
+                  <Grid container justifyContent={"end"}>
+                    <Tooltip title="Editar serviço">
+                      <Button
+                        endIcon={<BorderColorIcon sx={{ color: "black" }} />}
+                        onClick={() => editService(service.id)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="Deletar serviço">
+                      <Button
+                        endIcon={<DeleteIcon sx={{ color: "black" }} />}
+                        onClick={() => {
+                          deleteService(service.id);
                         }}
-                      >
-                        <b>Descrição:</b> {service.descricao}
-                      </Typography>
-                    </Grid>
-
-                    <Grid container>
-                      <Grid item xs={6}>
+                      />
+                    </Tooltip>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
+                  <Grid container>
+                    <Grid item xs={10}>
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Montserrat",
+                              fontSize: "16px",
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            <b>Preço: </b>
+                            {service.preco}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Montserrat",
+                              fontSize: "16px",
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            <b>Tempo: </b>
+                            {service.tempo}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                      <Grid container>
                         <Typography
                           sx={{
                             fontFamily: "Montserrat",
@@ -217,31 +233,45 @@ const CardService = () => {
                             paddingBottom: "5px",
                           }}
                         >
-                          <b>Animais:</b>
-                          {Array.isArray(service?.animais)
-                            ? service.animais.join(", ")
-                            : service?.animais}
+                          <b>Descrição:</b> {service.descricao}
                         </Typography>
                       </Grid>
-                      <Grid item xs={6}>
-                        <Typography
-                          sx={{
-                            fontFamily: "Montserrat",
-                            fontSize: "16px",
-                            paddingBottom: "5px",
-                          }}
-                        >
-                          <b>Porte:</b>
-                          {Array.isArray(service?.porte)
-                            ? service.porte.join(", ")
-                            : service?.porte}
-                        </Typography>
+
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Montserrat",
+                              fontSize: "16px",
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            <b>Animais:</b>
+                            {Array.isArray(service?.animais)
+                              ? service.animais.join(", ")
+                              : service?.animais}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Montserrat",
+                              fontSize: "16px",
+                              paddingBottom: "5px",
+                            }}
+                          >
+                            <b>Porte:</b>
+                            {Array.isArray(service?.porte)
+                              ? service.porte.join(", ")
+                              : service?.porte}
+                          </Typography>
+                        </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
+                </AccordionDetails>
+              </Accordion>
+            </>
           ))
         ) : (
           <>
@@ -287,6 +317,87 @@ const CardService = () => {
         }}
         service={editingService || {}}
       />
+
+      {/* Diálogo de Confirmação de Exclusão */}
+      <Dialog
+        open={confirmDelete}
+        onClose={closeDeleteConfirmation}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            fontFamily: "Montserrat",
+            fontSize: "20px",
+            fontWeight: 700,
+            padding: 2,
+            color: "#000000",
+          }}
+        >
+          {"Confirmar Exclusão"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{
+              fontFamily: "Montserrat",
+              fontSize: "15px",
+              fontWeight: 500,
+              padding: 2,
+              color: "#000000",
+            }}
+          >
+            <b>
+              Tem certeza de que deseja excluir o serviço{" "}
+              {serviceToDelete?.servicos} ?
+            </b>
+            <br></br>
+            <br></br>
+            <p>
+              Atenção! Ao excluir o serviço os agendamentos já presentes
+              continuaram validos caso queira cancelar algum agendamento{" "}
+            </p>
+            <Link
+              style={{
+                color: "#2a2a2a",
+                textDecoration: "none",
+                fontWeight: 700,
+              }}
+              to="/meusAgendamentos"
+            >
+              clique aqui
+            </Link>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={closeDeleteConfirmation}
+            sx={{
+              fontFamily: "Montserrat",
+              fontSize: "15px",
+              fontWeight: 500,
+              padding: 2,
+              color: "#000000",
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            sx={{
+              fontFamily: "Montserrat",
+              fontSize: "15px",
+              fontWeight: 500,
+              padding: 2,
+              color: "#000000",
+            }}
+            onClick={() => deleteService(serviceToDelete?.id)}
+            autoFocus
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
