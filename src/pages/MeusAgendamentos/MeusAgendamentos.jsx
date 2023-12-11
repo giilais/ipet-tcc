@@ -25,9 +25,10 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CalendarComponent from "../../components/Calendar/Calendar";
 import { DatePicker } from "rsuite";
-import { onValue, ref, remove } from "firebase/database";
+import { get, onValue, ref, update } from "firebase/database";
 import db from "../../services/firebaseConfig";
 import CloseIcon from "@mui/icons-material/Close";
+//import CheckIcon from "@mui/icons-material/Check";
 
 const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
   const [open, setOpen] = useState(false);
@@ -43,32 +44,64 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
     setOpen(false);
   };
 
-  const handleCancelAgendamento = () => {
-    let usuario = localStorage.getItem("userName");
+  const handleCancelAgendamento = async () => {
+    try {
+      let usuario = localStorage.getItem("userName");
 
-    if (
-      usuario &&
-      usuario.length > 2 &&
-      usuario.charAt(0) === '"' &&
-      usuario.charAt(usuario.length - 1) === '"'
-    ) {
-      usuario = usuario.slice(1, -1);
+      if (
+        usuario &&
+        usuario.length > 2 &&
+        usuario.charAt(0) === '"' &&
+        usuario.charAt(usuario.length - 1) === '"'
+      ) {
+        usuario = usuario.slice(1, -1);
+      }
+
+      const agendamentosRef = ref(
+        db,
+        "IpetClientsWeb/" +
+          usuario +
+          "/agendamentos/" +
+          selectedAppointment.select
+      );
+
+      const agendamentosRefMobile = ref(
+        db,
+        "IpetClientsMobile/" + selectedAppointment.idCliente + "/agendamentos"
+      );
+
+      //cancelando o agendamento web
+      update(agendamentosRef, { cancelado: true });
+
+      // cancelando o agendamento mobile
+      const mobileSnapshot = await get(agendamentosRefMobile);
+      if (mobileSnapshot.exists()) {
+        const mobileAgendamentos = mobileSnapshot.val();
+        const mobileAgendamentoKey = Object.keys(mobileAgendamentos).find(
+          (key) => mobileAgendamentos[key].id === selectedAppointment.id
+        );
+
+        if (mobileAgendamentoKey) {
+          const mobileAgendamentoRef = ref(
+            db,
+            "IpetClientsMobile/" +
+              selectedAppointment.idCliente +
+              "/agendamentos/" +
+              mobileAgendamentoKey
+          );
+
+          // Cancelando o agendamento mobile
+          await update(mobileAgendamentoRef, { cancelado: true });
+        }
+      }
+
+      // Mostrar alerta de sucesso
+      setAlertOpen(true);
+
+      handleClose();
+    } catch (error) {
+      console.log("Erro:", error);
     }
-
-    const agendamentosRef = ref(
-      db,
-      "IpetClientsWeb/" + usuario + "/agendamentos/" + selectedAppointment.id
-    );
-
-    //cancelando o agendamento!
-    remove(agendamentosRef)
-      .then(() => {
-        return <AlertMsgSuccess />;
-      })
-      .catch((error) => {
-        alert("erro:", error.message);
-      });
-    handleClose();
   };
 
   //mensagens de alerta
@@ -101,7 +134,7 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
             mt: 15,
           }}
         >
-          Agendamento excluido com sucesso!
+          Agendamento cancelado com sucesso!
         </Alert>
       </Collapse>
     );
@@ -120,7 +153,7 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
               width: "800px",
               backgroundColor: "#ffcc80",
             }}
-            key={appointment.id}
+            key={appointment.select}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon sx={{ color: "black" }} />}
@@ -133,6 +166,9 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
                     fontFamily: "Montserrat",
                     fontSize: "20px",
                     fontWeight: 600,
+                    textDecoration: appointment.cancelado
+                      ? "line-through"
+                      : "none",
                   }}
                 >
                   Serviço: {appointment.servico}
@@ -140,12 +176,17 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
               </Grid>
 
               <Grid container justifyContent={"end"}>
-                <Tooltip title="Cancelar agendamento" key={appointment.id}>
-                  <Button
-                    endIcon={<CancelIcon sx={{ color: "black" }} />}
-                    onClick={() => handleClickOpen(appointment)}
-                  />
-                </Tooltip>
+                {!appointment.cancelado && (
+                  <Tooltip
+                    title="Cancelar agendamento"
+                    key={appointment.select}
+                  >
+                    <Button
+                      endIcon={<CancelIcon sx={{ color: "black" }} />}
+                      onClick={() => handleClickOpen(appointment)}
+                    />
+                  </Tooltip>
+                )}
               </Grid>
             </AccordionSummary>
             <AccordionDetails sx={{ backgroundColor: "#ffcc80" }}>
@@ -238,6 +279,8 @@ const FilteredAppointmentsCard = ({ filteredAgendamentos }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {AlertMsgSuccess()}
     </>
   );
 };
@@ -271,7 +314,7 @@ const MeusAgendamentos = () => {
         const data = snapshot.val();
         if (data) {
           const agendamentosList = Object.keys(data).map((key) => ({
-            id: key,
+            select: key,
             ...data[key],
           }));
           setAgendamentosDt(agendamentosList);
