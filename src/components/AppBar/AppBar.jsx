@@ -40,6 +40,10 @@ function ResponsiveAppBar() {
     navigate("/meusFeedbacks");
   }
 
+  function goToMyProfile() {
+    navigate("/myProfile");
+  }
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
@@ -178,6 +182,7 @@ function ResponsiveAppBar() {
                     color: "black",
                     textTransform: "none",
                   }}
+                  onClick={goToMyProfile}
                 >
                   Meu Perfil
                 </Button>
