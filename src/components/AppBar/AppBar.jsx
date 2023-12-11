@@ -36,6 +36,10 @@ function ResponsiveAppBar() {
     navigate("/meusAgendamentos");
   }
 
+  function goToFeedbacks() {
+    navigate("/meusFeedbacks");
+  }
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
@@ -114,6 +118,24 @@ function ResponsiveAppBar() {
               }}
             >
               Meus Agendamentos
+            </Button>
+
+            <Button
+              onClick={goToFeedbacks}
+              sx={{
+                my: 2,
+                color: "#000",
+                display: "block",
+                textTransform: "none",
+                fontFamily: "Montserrat",
+                fontSize: "15px",
+                "&:hover": {
+                  color: "#ffa726",
+                  transition: "400ms",
+                },
+              }}
+            >
+              Feedbacks
             </Button>
           </Box>
 
