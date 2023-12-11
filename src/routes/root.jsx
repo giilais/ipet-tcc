@@ -10,6 +10,7 @@ import RegisterService from "../pages/RegisterService/RegisterService";
 import MinhaAgenda from "../pages/MinhaAgenda/MinhaAgenda";
 import MeusAgendamentos from "../pages/MeusAgendamentos/MeusAgendamentos";
 import Feedbacks from "../pages/Feedbacks/Feedbacks";
+import MyProfile from "../pages/MyProfile/MyProfile";
 
 const Roots = () => {
   return (
@@ -23,7 +24,8 @@ const Roots = () => {
       <Route element={<RegisterService />} path="/registerServices" />
       <Route element={<MinhaAgenda />} path="/minhaAgenda" />
       <Route element={<MeusAgendamentos />} path="/meusAgendamentos" />
-      <Route element={<Feedbacks/>} path="/meusFeedbacks" />
+      <Route element={<Feedbacks />} path="/meusFeedbacks" />
+      <Route element={<MyProfile />} path="/myProfile" />
     </Routes>
   );
 };
